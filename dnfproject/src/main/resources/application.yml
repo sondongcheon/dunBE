@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: dnfproject
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/dnfproject?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: ssafy
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.dnfproject: DEBUG
+
+api:
+  key: iq3ORt1snK22t1nkSJeo3iZNPeH5REqi
