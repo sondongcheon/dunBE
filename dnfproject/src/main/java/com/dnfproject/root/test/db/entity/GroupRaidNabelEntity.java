@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "group_raid_naval")
+@Table(name = "group_raid_nabel")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GroupRaidNavalEntity {
+public class GroupRaidNabelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
