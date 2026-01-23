@@ -9,19 +9,19 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "member_raid_naval")
+@Table(name = "member_raid_nabel")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberRaidNavalEntity {
+public class MemberRaidNabelEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id", nullable = false)
-    private GroupRaidNavalEntity group;
+    private GroupRaidNabelEntity group;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "character_id", nullable = false)
