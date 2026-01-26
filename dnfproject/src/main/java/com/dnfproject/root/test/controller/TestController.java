@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.controller;
 
 import com.dnfproject.root.test.db.dto.req.TestReq;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/test")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class TestController {
@@ -51,3 +52,4 @@ public class TestController {
         return charactersRepository.findAll();
     }
 }
+*/

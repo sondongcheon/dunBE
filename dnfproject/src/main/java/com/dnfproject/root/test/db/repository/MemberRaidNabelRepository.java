@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.repository;
 
 import com.dnfproject.root.test.db.entity.MemberRaidNabelEntity;
@@ -12,3 +13,4 @@ public interface MemberRaidNabelRepository extends JpaRepository<MemberRaidNabel
     List<MemberRaidNabelEntity> findByGroupId(Long groupId);
     Optional<MemberRaidNabelEntity> findByGroupIdAndCharacterId(Long groupId, Long characterId);
 }
+*/

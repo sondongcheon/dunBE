@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.service;
 
 import com.dnfproject.root.test.db.dto.req.TestReq;
@@ -9,3 +10,4 @@ public interface TestService {
     TestRes updateTest(Long id, TestReq request);
     void deleteTest(Long id);
 }
+*/

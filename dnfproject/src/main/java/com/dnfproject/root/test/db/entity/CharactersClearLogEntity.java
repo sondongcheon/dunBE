@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.entity;
 
 import jakarta.persistence.*;
@@ -37,3 +38,4 @@ public class CharactersClearLogEntity {
         updateAt = LocalDateTime.now();
     }
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.entity;
 
 import jakarta.persistence.*;
@@ -47,3 +48,4 @@ public class TestEntity {
         this.description = description;
     }
 }
+*/

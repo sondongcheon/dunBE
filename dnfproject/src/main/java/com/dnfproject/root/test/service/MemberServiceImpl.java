@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.service;
 
 import com.dnfproject.root.test.db.dto.req.MemberReq;
@@ -58,3 +59,4 @@ public class MemberServiceImpl implements MemberService {
         memberRaidNabelRepository.delete(member);
     }
 }
+*/

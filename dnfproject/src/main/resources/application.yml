@@ -11,13 +11,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    #show-sql: true #로그창에 SQL문 출력
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
 
 server:
+  servlet:
+    context-path: /api
   port: 8080
 
 logging:

@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.entity;
 
 import jakarta.persistence.*;
@@ -39,3 +40,4 @@ public class AdventureEntity {
         updateAt = LocalDateTime.now();
     }
 }
+*/

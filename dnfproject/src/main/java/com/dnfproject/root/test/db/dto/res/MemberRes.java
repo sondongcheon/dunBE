@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.dto.res;
 
 import lombok.AllArgsConstructor;
@@ -22,3 +23,4 @@ public class MemberRes {
     private LocalDateTime updateAt;
     private Boolean clearStatus;
 }
+*/

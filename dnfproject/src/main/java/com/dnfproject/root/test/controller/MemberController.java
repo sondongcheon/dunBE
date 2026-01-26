@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.controller;
 
 import com.dnfproject.root.test.db.dto.req.MemberReq;
@@ -8,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/member")
+@RequestMapping("/member")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class MemberController {
@@ -31,3 +32,4 @@ public class MemberController {
         return ResponseEntity.noContent().build();
     }
 }
+*/

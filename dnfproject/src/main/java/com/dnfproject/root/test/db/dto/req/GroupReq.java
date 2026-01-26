@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.dto.req;
 
 import lombok.Getter;
@@ -9,3 +10,4 @@ public class GroupReq {
     private Long adventureId;
     private String name;
 }
+*/
