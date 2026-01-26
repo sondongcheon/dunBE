@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.controller;
 
 import com.dnfproject.root.test.db.dto.req.GroupReq;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/group")
+@RequestMapping("/group")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class GroupController {
@@ -31,3 +32,4 @@ public class GroupController {
         return ResponseEntity.ok(response);
     }
 }
+*/

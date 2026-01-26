@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.service;
 
 import com.dnfproject.root.test.db.dto.req.GroupReq;
@@ -109,3 +110,4 @@ public class GroupServiceImpl implements GroupService {
         }
     }
 }
+*/

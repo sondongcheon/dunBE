@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -54,3 +55,4 @@ public class CharactersEntity {
         updateAt = LocalDateTime.now();
     }
 }
+*/

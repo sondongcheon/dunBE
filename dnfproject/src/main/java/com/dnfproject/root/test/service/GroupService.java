@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.service;
 
 import com.dnfproject.root.test.db.dto.req.GroupReq;
@@ -9,3 +10,4 @@ public interface GroupService {
     GroupRes createGroup(GroupReq request);
     List<GroupRes> getGroupsByAdventureId(Long adventureId, String contentType);
 }
+*/

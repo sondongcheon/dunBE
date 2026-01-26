@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.service;
 
 import com.dnfproject.root.test.db.dto.req.TestReq;
@@ -75,3 +76,4 @@ public class TestServiceImpl implements TestService {
         testRepository.delete(entity);
     }
 }
+*/

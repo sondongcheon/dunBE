@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.entity;
 
 import jakarta.persistence.*;
@@ -43,3 +44,4 @@ public class GroupRaidNabelEntity {
         updateAt = LocalDateTime.now();
     }
 }
+*/

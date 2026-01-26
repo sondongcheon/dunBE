@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.dto.res;
 
 import lombok.AllArgsConstructor;
@@ -18,3 +19,4 @@ public class TestRes {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+*/

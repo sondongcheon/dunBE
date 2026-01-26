@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.dto.res;
 
 import lombok.AllArgsConstructor;
@@ -20,3 +21,4 @@ public class GroupRes {
     private LocalDateTime updateAt;
     private List<MemberRes> members;
 }
+*/

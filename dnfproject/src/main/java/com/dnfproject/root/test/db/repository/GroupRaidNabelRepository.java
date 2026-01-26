@@ -1,3 +1,4 @@
+/*
 package com.dnfproject.root.test.db.repository;
 
 import com.dnfproject.root.test.db.entity.GroupRaidNabelEntity;
@@ -10,3 +11,4 @@ import java.util.List;
 public interface GroupRaidNabelRepository extends JpaRepository<GroupRaidNabelEntity, Long> {
     List<GroupRaidNabelEntity> findByAdventureId(Long adventureId);
 }
+*/
