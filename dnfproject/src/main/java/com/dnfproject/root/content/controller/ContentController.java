@@ -31,10 +31,11 @@ public class ContentController {
     }
 
     @DeleteMapping("/member")
-    public ResponseEntity<Void> removeMembersByGroupId(
+    public ResponseEntity<Void> removeMembersByGroupIdAndCharacterId(
             @RequestParam("groupId") Long groupId,
+            @RequestParam("characterId") Long characterId,
             @RequestParam("contentName") String contentName) {
-        contentService.removeMembersByGroupId(groupId, contentName);
+        contentService.removeMembersByGroupIdAndCharacterId(groupId, characterId, contentName);
         return ResponseEntity.noContent().build();
     }
 

@@ -17,5 +17,6 @@ public class CharacterListDTO {
     private String memo;
     private Long groupId;
     private Long groupNum;
+    private Boolean clearState;
 
 }

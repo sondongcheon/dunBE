@@ -3,9 +3,9 @@ spring:
     name: dnfproject
   
   datasource:
-    url: jdbc:mysql://localhost:3306/dnfproject?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://3.38.192.64:3306/dnfproject?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: root
+    password: dladyghks11ghdwlsgh22
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
@@ -16,6 +16,12 @@ spring:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+  jwt:
+    #secret: ${JWT_SECRET:dnfproject-jwt-secret-key-minimum-32bytes-for-hs256}
+    secret: dladyghks11ghdwlsgh22dladyghks11ghdwlsgh22
+    access-expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
 
 server:
   servlet:

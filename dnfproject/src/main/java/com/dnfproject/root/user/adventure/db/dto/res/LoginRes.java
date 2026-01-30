@@ -17,13 +17,17 @@ public class LoginRes {
     private String adventureName;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
+    private String accessToken;
+    private String refreshToken;
 
-    public static LoginRes from(AdventureEntity adventure) {
+    public static LoginRes of(AdventureEntity adventure, String accessToken, String refreshToken) {
         return LoginRes.builder()
                 .id(adventure.getId())
                 .adventureName(adventure.getAdventureName())
                 .createAt(adventure.getCreateAt())
                 .updateAt(adventure.getUpdateAt())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 }
