@@ -4,6 +4,6 @@ import com.dnfproject.root.content.db.dto.res.ContentRes;
 
 public interface ContentService {
     ContentRes getContent(Long adventureId, String contentName);
-    void removeMembersByGroupId(Long groupId, String contentName);
+    void removeMembersByGroupIdAndCharacterId(Long groupId, Long characterId, String contentName);
     void addMember(Long groupId, Long characterId, String contentName);
 }

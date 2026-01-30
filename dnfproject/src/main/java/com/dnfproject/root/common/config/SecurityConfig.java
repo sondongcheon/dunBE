@@ -1,12 +1,14 @@
 package com.dnfproject.root.common.config;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -14,7 +16,15 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtUtil jwtUtil;
+
+    @Bean
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,43 +47,21 @@ public class SecurityConfig {
                     }
                 })));
 
-        //csrf disable
-        http
-                .csrf((auth) -> auth.disable());
+        http.csrf((auth) -> auth.disable());
+        http.formLogin((auth) -> auth.disable());
+        http.httpBasic((auth) -> auth.disable());
 
-        //From 로그인 방식 disable
-        http
-                .formLogin((auth) -> auth.disable());
-
-        //http basic 인증 방식 disable
-        http
-                .httpBasic((auth) -> auth.disable());
-
-
-        //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-
-                        // 개발용 페이지
                         .requestMatchers("/swagger", "/swagger-ui.html", "/swagger-ui/**", "/api-docs", "/api-docs/**", "/v3/api-docs/**")
                         .permitAll()
-
-                        //test
-//                        .requestMatchers(HttpMethod.GET, "/test/**").permitAll()
-
-
-                        //board
-                        //.requestMatchers(HttpMethod.GET, "/board/notice/*", "/board/notice/**").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/board/notice/**").permitAll()
-
-
-
-                        //.requestMatchers("/*", "/**").denyAll()
-                        .requestMatchers("/*", "/**").permitAll()
+                        .requestMatchers("/adventure/login", "/adventure/join", "/adventure/reissue", "/adventure/test/update-password")
+                        .permitAll()
+                        .requestMatchers("/*", "/**")
+                        .permitAll()
                         .anyRequest().authenticated());
-//                .exceptionHandling((exceptionConfig) ->
-//                        exceptionConfig.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/user/error")));
 
+        http.addFilterBefore(new JwtFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

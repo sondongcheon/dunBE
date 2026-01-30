@@ -9,4 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AdventureRepository extends JpaRepository<AdventureEntity, Long> {
     Optional<AdventureEntity> findByAdventureName(String adventureName);
+    boolean existsByAdventureName(String adventureName);
 }

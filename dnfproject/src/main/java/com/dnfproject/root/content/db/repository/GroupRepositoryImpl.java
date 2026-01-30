@@ -35,10 +35,10 @@ public class GroupRepositoryImpl implements GroupRepositoryCustom {
     }
     
     @Override
-    public void deleteMembersByGroupId(Long groupId, String contentName) {
+    public void deleteMembersByGroupIdAndCharacterId(Long groupId, Long characterId, String contentName) {
         String memberTableName = "content_" + contentName + "_member";
-        String sql = "DELETE FROM " + memberTableName + " WHERE group_id = ?";
-        jdbcTemplate.update(sql, groupId);
+        String sql = "DELETE FROM " + memberTableName + " WHERE group_id = ? and character_id = ?";
+        jdbcTemplate.update(sql, groupId, characterId);
     }
     
     @Override

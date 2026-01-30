@@ -10,6 +10,11 @@ public enum ErrorCode {
 
     TEST_EXCEPTION(HttpStatus.BAD_REQUEST, "TEST-001", "익셉션 테스트"),
 
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-001", "모험단명 또는 비밀번호가 올바르지 않습니다."),
+    ADVENTURE_NAME_DUPLICATE(HttpStatus.BAD_REQUEST, "AUTH-002", "이미 사용 중인 모험단명입니다."),
+    REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "AUTH-003", "리프레시 토큰이 유효하지 않거나 만료되었습니다."),
+    ADVENTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH-004", "모험단을 찾을 수 없습니다."),
+
     //캐릭터 검색 결과 없음
     NONE_CHARACTER(HttpStatus.NOT_FOUND, "API-006", "검색 결과가 없습니다."),
     

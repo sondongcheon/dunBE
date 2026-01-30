@@ -26,9 +26,11 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 "c.fame, " +
                 "c.memo, " +
                 "m.id AS groupId, " +
-                "m.group_id AS groupNum " +
+                "m.group_id AS groupNum, " +
+                "state." + content + " AS clearState " +
                 "FROM characters c " +
-                "LEFT JOIN " + content + " m ON m.character_id = c.id " +
+                "LEFT JOIN characters_clear_state state ON c.id = state.id " +
+                "LEFT JOIN content_" + content + "_member m ON m.character_id = c.id " +
                 "WHERE c.adventure_id = ? " +
                 "ORDER BY c.characters_name";
         
