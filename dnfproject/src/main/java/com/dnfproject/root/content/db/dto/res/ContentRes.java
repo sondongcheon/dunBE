@@ -18,5 +18,5 @@ import java.util.List;
 public class ContentRes {
     private List<GroupListDTO> groups;
     private List<CharacterListDTO> characters;
-
+    private List<PartyInContentRes> parties;
 }

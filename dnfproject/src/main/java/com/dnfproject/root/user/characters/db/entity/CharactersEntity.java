@@ -61,6 +61,14 @@ public class CharactersEntity {
         updateAt = LocalDateTime.now();
     }
 
+    public void updateMemo(String memo) {
+        this.memo = memo;
+    }
+
+    public void updateFame(String fame) {
+        this.fame = fame;
+    }
+
     public static CharactersEntity from(AdventureEntity adventure, String charactersId, String server, String charactersName, String jobGrowName, String fame) {
         return CharactersEntity.builder()
                 .adventure(adventure)

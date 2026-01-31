@@ -1,8 +1,17 @@
 package com.dnfproject.root.content.service;
 
 import com.dnfproject.root.content.db.dto.GroupListDTO;
+import com.dnfproject.root.content.db.dto.req.CreateGroupReq;
+import com.dnfproject.root.content.db.dto.req.RemoveGroupReq;
+import com.dnfproject.root.content.db.dto.req.UpdateGroupNameReq;
 import com.dnfproject.root.content.db.dto.res.ContentRes;
+import com.dnfproject.root.content.db.dto.res.GroupCreateRes;
+import com.dnfproject.root.content.db.dto.res.AdventureInPartyRes;
+import com.dnfproject.root.content.db.dto.res.PartyInContentRes;
+import com.dnfproject.root.common.exception.CustomException;
+import com.dnfproject.root.common.exception.ErrorCode;
 import com.dnfproject.root.content.db.repository.GroupRepository;
+import com.dnfproject.root.content.db.repository.PartyRepositoryCustom;
 import com.dnfproject.root.user.characters.db.dto.CharacterListDTO;
 import com.dnfproject.root.user.characters.db.entity.CharactersEntity;
 import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
@@ -20,6 +29,7 @@ import java.util.List;
 public class ContentServiceImpl implements ContentService {
     
     private final GroupRepository groupRepository;
+    private final PartyRepositoryCustom partyRepositoryCustom;
     private final CharactersRepository charactersRepository;
     private final CharacterServiceImpl characterService;
     private final EntityManager entityManager;
@@ -27,18 +37,49 @@ public class ContentServiceImpl implements ContentService {
     @Override
     @Transactional
     public ContentRes getContent(Long adventureId, String contentName) {
-        // clearState 최신화
+        // clearState 최신화 (파라미터 adventureId)
         updateClearStatesByAdventureId(adventureId);
+
+        // 파티에 참여 중인 다른 모험단들의 clearState도 최신화 (내 ID 제외하여 중복 최신화 방지)
+        List<PartyInContentRes> partiesForUpdate = partyRepositoryCustom.findPartiesByAdventureId(contentName, adventureId);
+        for (PartyInContentRes party : partiesForUpdate) {
+            if (party.getAdventures() == null) continue;
+            for (AdventureInPartyRes adv : party.getAdventures()) {
+                if (adv.getId().equals(adventureId)) continue;
+                updateClearStatesByAdventureId(adv.getId());
+            }
+        }
         
         // JPA 변경사항을 DB에 즉시 반영 (JDBC 쿼리가 최신 데이터를 읽을 수 있도록)
         entityManager.flush();
         
         List<GroupListDTO> groupList = groupRepository.findGroupsByAdventureId(adventureId, contentName);
         List<CharacterListDTO> characterList = charactersRepository.findCharactersByAdventureId(adventureId, contentName);
-        
-        return new ContentRes(groupList, characterList);
+        List<PartyInContentRes> parties = partyRepositoryCustom.findPartiesByAdventureId(contentName, adventureId);
+
+        return ContentRes.builder()
+                .groups(groupList)
+                .characters(characterList)
+                .parties(parties)
+                .build();
     }
     
+    @Override
+    @Transactional
+    public GroupCreateRes createGroup(CreateGroupReq request, Long adventureId) {
+        if (adventureId == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        if (request.getContent() == null || request.getContent().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_REQUIRED);
+        }
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NAME_REQUIRED);
+        }
+
+        return groupRepository.createGroup(request.getContent(), adventureId, request.getName());
+    }
+
     private void updateClearStatesByAdventureId(Long adventureId) {
         List<CharactersEntity> characters = charactersRepository.findByAdventureId(adventureId);
         for (CharactersEntity character : characters) {
@@ -56,6 +97,49 @@ public class ContentServiceImpl implements ContentService {
     @Transactional
     public void addMember(Long groupId, Long characterId, String contentName) {
         groupRepository.addMember(groupId, characterId, contentName);
+    }
+
+    @Override
+    @Transactional
+    public void updateGroupName(UpdateGroupNameReq request, Long adventureId) {
+        if (adventureId == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        if (request.getContent() == null || request.getContent().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_REQUIRED);
+        }
+        if (request.getGroupId() == null) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NOT_FOUND);
+        }
+        if (request.getName() == null || request.getName().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NAME_REQUIRED);
+        }
+
+        if (!groupRepository.existsGroupByAdventureId(request.getContent(), request.getGroupId(), adventureId)) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NOT_FOUND);
+        }
+
+        groupRepository.updateGroupName(request.getContent(), request.getGroupId(), request.getName());
+    }
+
+    @Override
+    @Transactional
+    public void removeGroup(RemoveGroupReq request, Long adventureId) {
+        if (adventureId == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        if (request.getContent() == null || request.getContent().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_REQUIRED);
+        }
+        if (request.getGroupId() == null) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NOT_FOUND);
+        }
+
+        if (!groupRepository.existsGroupByAdventureId(request.getContent(), request.getGroupId(), adventureId)) {
+            throw new CustomException(ErrorCode.CONTENT_GROUP_NOT_FOUND);
+        }
+
+        groupRepository.deleteGroup(request.getContent(), request.getGroupId());
     }
 
 }

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface CharactersRepository extends JpaRepository<CharactersEntity, Long>, CharactersRepositoryCustom {
     Optional<CharactersEntity> findByCharactersId(String charactersId);
     List<CharactersEntity> findByAdventureId(Long adventureId);
+    boolean existsByIdAndAdventure_Id(Long id, Long adventureId);
 }

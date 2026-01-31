@@ -1,26 +1,31 @@
 package com.dnfproject.root.user.characters.db.repository;
 
+import com.dnfproject.root.common.Enums.Servers;
 import com.dnfproject.root.user.characters.db.dto.CharacterListDTO;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 @Repository
 public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
-    
+
+    private static final String IMG_URL_FORMAT = "https://img-api.neople.co.kr/df/servers/%s/characters/%s?zoom=1";
+
     private final JdbcTemplate jdbcTemplate;
-    
+
     public CharactersRepositoryImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-    
+
     @Override
     public List<CharacterListDTO> findCharactersByAdventureId(Long adventureId, String content) {
         String sql = "SELECT " +
                 "c.id AS id, " +
                 "c.server AS server, " +
+                "c.characters_id AS charactersId, " +
                 "c.characters_name AS nickname, " +
                 "c.job_grow_name AS job, " +
                 "c.fame, " +
@@ -33,10 +38,43 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 "LEFT JOIN content_" + content + "_member m ON m.character_id = c.id " +
                 "WHERE c.adventure_id = ? " +
                 "ORDER BY c.characters_name";
-        
-        return jdbcTemplate.query(sql, 
-                new BeanPropertyRowMapper<>(CharacterListDTO.class),
-                adventureId);
+
+        return jdbcTemplate.query(sql, this::mapToCharacterListDTO, adventureId);
+    }
+
+    private CharacterListDTO mapToCharacterListDTO(ResultSet rs, int rowNum) throws SQLException {
+        String server = rs.getString("server");
+        String charactersId = rs.getString("charactersId");
+        String serverEnglish = Servers.getByName(server != null ? server : "").getEnglishName();
+        String img = (charactersId != null && !charactersId.isBlank() && !serverEnglish.isBlank())
+                ? String.format(IMG_URL_FORMAT, serverEnglish, charactersId)
+                : null;
+
+        return CharacterListDTO.builder()
+                .id(rs.getLong("id"))
+                .characterId(charactersId)
+                .server(server)
+                .img(img)
+                .nickname(rs.getString("nickname"))
+                .job(rs.getString("job"))
+                .fame(rs.getString("fame"))
+                .memo(rs.getString("memo"))
+                .groupId(getLongOrNull(rs, "groupId"))
+                .groupNum(getLongOrNull(rs, "groupNum"))
+                .clearState(toBoolean(rs.getObject("clearState")))
+                .build();
+    }
+
+    private static Long getLongOrNull(ResultSet rs, String column) throws SQLException {
+        long value = rs.getLong(column);
+        return rs.wasNull() ? null : value;
+    }
+
+    private static Boolean toBoolean(Object value) {
+        if (value == null) return null;
+        if (value instanceof Boolean b) return b;
+        if (value instanceof Number n) return n.byteValue() != 0;
+        return null;
     }
     
     @Override
