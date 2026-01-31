@@ -10,7 +10,9 @@ import lombok.*;
 public class CharacterListDTO {
 
     private Long id;
+    private String characterId;  // Neople API 캐릭터 ID (characters_id)
     private String server;
+    private String img;
     private String nickname;
     private String job;
     private String fame;

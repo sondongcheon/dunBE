@@ -9,6 +9,7 @@ import com.dnfproject.root.user.adventure.db.repository.AdventureRepository;
 import com.dnfproject.root.user.characters.db.dto.APIres.CharacterBasicInfoRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.CharacterSearchRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.TimelineRes;
+import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
 import com.dnfproject.root.user.characters.db.entity.CharactersEntity;
 import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
@@ -95,6 +96,28 @@ public class CharacterServiceImpl implements CharacterService {
         // 캐릭터 엔티티 생성 및 저장
         CharactersEntity savedCharacter = createAndSaveCharacter(adventure, basicInfo, searchRow, timelineRes);
         return CharacterAddRes.from(savedCharacter);
+    }
+
+    @Override
+    @Transactional
+    public void updateMemo(UpdateCharacterMemoReq request, Long adventureId) {
+        if (adventureId == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        if (request.getCharacterId() == null) {
+            throw new CustomException(ErrorCode.CHARACTER_ID_REQUIRED);
+        }
+
+        CharactersEntity character = charactersRepository.findById(request.getCharacterId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
+
+        if (!character.getAdventure().getId().equals(adventureId)) {
+            throw new CustomException(ErrorCode.CHARACTER_NOT_OWNED);
+        }
+
+        String memo = request.getMemo() != null ? request.getMemo() : "";
+        character.updateMemo(memo);
+        charactersRepository.save(character);
     }
 
     private CharacterSearchRes searchCharacter(String server, String characterName) {
@@ -203,6 +226,12 @@ public class CharacterServiceImpl implements CharacterService {
         
         // 타임라인 조회
         TimelineRes timelineRes = getCharacterTimeline(serverEnglish, characterId);
+
+        // Fame 최신화
+        if (timelineRes != null && timelineRes.getFame() != null) {
+            character.updateFame(String.valueOf(timelineRes.getFame()));
+            charactersRepository.save(character);
+        }
         
         // 타임라인 분석하여 clearState 결정
         ClearStateInfo clearStateInfo = analyzeTimelineForClearState(timelineRes);
