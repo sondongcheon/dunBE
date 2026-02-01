@@ -37,7 +37,7 @@ public class SecurityConfig {
 
                         CorsConfiguration config = new CorsConfiguration();
 
-                        config.setAllowedOrigins(List.of("http://localhost:3010", "https://dunroot.com/", "https://www.dunroot.com/"));
+                        config.setAllowedOrigins(List.of("http://localhost:3010", "http://m.localhost:3010", "https://dunroot.com/", "https://www.dunroot.com/"));
                         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
                         config.setAllowCredentials(true);
                         config.setAllowedHeaders(List.of("*"));
