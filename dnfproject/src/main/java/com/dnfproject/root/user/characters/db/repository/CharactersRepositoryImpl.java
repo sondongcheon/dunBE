@@ -8,11 +8,21 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
 
     private static final String IMG_URL_FORMAT = "https://img-api.neople.co.kr/df/servers/%s/characters/%s?zoom=1";
+
+    private static final Map<String, Integer> CONTENT_MIN_FAME = Map.of(
+            "azure_main", 44929,
+            "goddess_of_death_temple", 48988,
+            "venus_goddess_of_beauty", 41929,
+            "nabel", 47684,
+            "inae", 72688,
+            "diregie", 63257
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -22,6 +32,9 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
 
     @Override
     public List<CharacterListDTO> findCharactersByAdventureId(Long adventureId, String content) {
+        Integer minFame = CONTENT_MIN_FAME.get(content);
+        String fameCondition = minFame != null ? " AND c.fame >= ? " : "";
+
         String sql = "SELECT " +
                 "c.id AS id, " +
                 "c.server AS server, " +
@@ -36,10 +49,12 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 "FROM characters c " +
                 "LEFT JOIN characters_clear_state state ON c.id = state.id " +
                 "LEFT JOIN content_" + content + "_member m ON m.character_id = c.id " +
-                "WHERE c.adventure_id = ? " +
+                "WHERE c.adventure_id = ? " + fameCondition +
                 "ORDER BY c.fame DESC";
 
-        return jdbcTemplate.query(sql, this::mapToCharacterListDTO, adventureId);
+        return minFame != null
+                ? jdbcTemplate.query(sql, this::mapToCharacterListDTO, adventureId, minFame)
+                : jdbcTemplate.query(sql, this::mapToCharacterListDTO, adventureId);
     }
 
     private CharacterListDTO mapToCharacterListDTO(ResultSet rs, int rowNum) throws SQLException {
