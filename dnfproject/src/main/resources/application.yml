@@ -1,13 +1,13 @@
 spring:
   application:
     name: dnfproject
-  
+
   datasource:
-    url: jdbc:mysql://3.38.192.64:3306/dnfproject?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: root
-    password: dladyghks11ghdwlsgh22
+    url: ENC(4BpveoBBl0bUUEmq0lJ1OlXchXzbiOneb9Jq7WDvGLEmhVRE3u+sNUT8//FRyBwooKnsrMJY6ug91YiWLKNoRskLON+9mvsCuFP0XLoWnjgPodKDRAemPEXi9QJXggjEc6R8FfNjZCFKioSxaB8vzA==)
+    username: ENC(UjM6YNNUbLSbmZUmrsVQgg==)
+    password: ENC(pEgjf+s0UG/ZeZ6H86gbzJnOsYtYbjN2rtPZbcm4sGE=)
     driver-class-name: com.mysql.cj.jdbc.Driver
-  
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,14 +19,14 @@ spring:
 
   jwt:
     #secret: ${JWT_SECRET:dnfproject-jwt-secret-key-minimum-32bytes-for-hs256}
-    secret: dladyghks11ghdwlsgh22dladyghks11ghdwlsgh22
+    secret: ENC(/Lu+5ujjPk+thbrUzOTHgDkJuPsF4I7JYoLrOrUDiV1Znh1Aasv5tPZSF1wQZT6OREpSMGp1gVc=)
     access-expiration-ms: 86400000
     refresh-expiration-ms: 604800000
 
 server:
   servlet:
     context-path: /api
-  port: 8080
+  port: 8090
 
 logging:
   level:
@@ -34,4 +34,4 @@ logging:
     com.dnfproject: DEBUG
 
 api:
-  key: iq3ORt1snK22t1nkSJeo3iZNPeH5REqi
+  key: ENC(ru/0+/rvnh8UBQLm9YTYXtcsbEvVJ9tz1qUv3NpsEFoLY5qFoHGs27ZdUcsgHMLp)
