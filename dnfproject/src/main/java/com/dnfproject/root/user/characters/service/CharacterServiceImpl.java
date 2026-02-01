@@ -17,6 +17,7 @@ import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
 import com.dnfproject.root.user.characters.db.repository.CharactersClearStateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CharacterServiceImpl implements CharacterService {
+
+    private final PasswordEncoder passwordEncoder;
 
     private static final DateTimeFormatter API_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmm");
     private static final ZoneId KOREA_ZONE = ZoneId.of("Asia/Seoul");
@@ -172,6 +175,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .orElseGet(() -> {
                     AdventureEntity newAdventure = AdventureEntity.builder()
                             .adventureName(adventureName)
+                            .password(passwordEncoder.encode("1234"))
                             .build();
                     return adventureRepository.save(newAdventure);
                 });
