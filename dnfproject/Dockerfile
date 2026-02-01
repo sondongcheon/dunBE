@@ -1,7 +1,7 @@
 FROM eclipse-temurin:21-jdk
 
 # JAR 파일의 경로를 ARG로 선언
-ARG JAR_FILE=build/libs/dnfproject-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=build/libs/dnfproject-1.0-SNAPSHOT.jar
 
 # JASYPT_KEY 값을 ARG로 받아서 환경 변수로 설정
 ARG JASYPT_KEY
