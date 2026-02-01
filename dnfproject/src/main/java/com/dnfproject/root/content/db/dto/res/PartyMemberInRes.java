@@ -21,4 +21,5 @@ public class PartyMemberInRes {
     private String fame;   // 명성
     private String memo;
     private String img;
+    private Boolean clearState;
 }

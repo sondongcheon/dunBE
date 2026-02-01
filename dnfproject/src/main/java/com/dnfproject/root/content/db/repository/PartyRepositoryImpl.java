@@ -161,10 +161,11 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                 .distinct()
                 .toList();
         String groupPlaceholders = String.join(",", groupIds.stream().map(id -> "?").toList());
-        String memberSql = "SELECT pm.party_group_id, pm.character_id, c.server, c.characters_id, c.characters_name, c.job_grow_name, c.fame, c.memo, a.adventure_name " +
+        String memberSql = "SELECT pm.party_group_id, pm.character_id, c.server, c.characters_id, c.characters_name, c.job_grow_name, c.fame, c.memo, a.adventure_name, state." + content + " AS clearState " +
                 "FROM " + partyMemberTable + " pm " +
                 "JOIN characters c ON pm.character_id = c.id " +
                 "JOIN adventure a ON c.adventure_id = a.id " +
+                "LEFT JOIN characters_clear_state state ON c.id = state.id " +
                 "WHERE pm.party_group_id IN (" + groupPlaceholders + ") ORDER BY pm.party_group_id";
         List<Map<String, Object>> memberRows = jdbcTemplate.queryForList(memberSql, groupIds.toArray());
 
@@ -180,8 +181,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                     : null;
 
             PartyMemberInRes member = PartyMemberInRes.builder()
-                    .id( ((Number) row.get("character_id")).longValue())
-                    .characterId( (String) row.get("characters_id"))
+                    .id(((Number) row.get("character_id")).longValue())
+                    .characterId((String) row.get("characters_id"))
                     .characterName(characterName)
                     .adventureName((String) row.get("adventure_name"))
                     .server(server)
@@ -190,6 +191,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                     .fame((String) row.get("fame"))
                     .memo((String) row.get("memo"))
                     .img(img)
+                    .clearState(toBoolean(row.get("clearState")))
                     .build();
             groupMembersMap.computeIfAbsent(groupId, k -> new ArrayList<>()).add(member);
         }
