@@ -38,8 +38,8 @@ public class CharactersEntity {
     @Column(name = "job_grow_name", length = 256)
     private String jobGrowName;
 
-    @Column(name = "fame", length = 256)
-    private String fame;
+    @Column(name = "fame")
+    private Integer fame;
 
     @Column(name = "memo", length = 256)
     private String memo;
@@ -65,11 +65,11 @@ public class CharactersEntity {
         this.memo = memo;
     }
 
-    public void updateFame(String fame) {
+    public void updateFame(Integer fame) {
         this.fame = fame;
     }
 
-    public static CharactersEntity from(AdventureEntity adventure, String charactersId, String server, String charactersName, String jobGrowName, String fame) {
+    public static CharactersEntity from(AdventureEntity adventure, String charactersId, String server, String charactersName, String jobGrowName, Integer fame) {
         return CharactersEntity.builder()
                 .adventure(adventure)
                 .charactersId(charactersId)

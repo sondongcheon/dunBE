@@ -185,7 +185,6 @@ public class CharacterServiceImpl implements CharacterService {
 
         String serverKorean = Servers.getByEnglishName(basicInfo.getServerId()).getName();
         String jobGrowName = searchRow.getJobGrowName();
-        String fame = String.valueOf(basicInfo.getFame());
 
         CharactersEntity newCharacter = CharactersEntity.from(
                 adventure,
@@ -193,7 +192,7 @@ public class CharacterServiceImpl implements CharacterService {
                 serverKorean,
                 basicInfo.getCharacterName(),
                 jobGrowName,
-                fame
+                basicInfo.getFame()
         );
 
         CharactersEntity savedCharacter = charactersRepository.save(newCharacter);
@@ -229,7 +228,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         // Fame 최신화
         if (timelineRes != null && timelineRes.getFame() != null) {
-            character.updateFame(String.valueOf(timelineRes.getFame()));
+            character.updateFame(timelineRes.getFame());
             charactersRepository.save(character);
         }
         

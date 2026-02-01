@@ -16,7 +16,7 @@ public class AdventureCharacterInRes {
     private String name;
     private String server;
     private String job;
-    private String fame;
+    private Integer fame;
     private String memo;
     private String img;
 }

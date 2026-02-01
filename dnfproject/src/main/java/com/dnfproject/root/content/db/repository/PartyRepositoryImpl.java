@@ -126,7 +126,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                         .name((String) row.get("characters_name"))
                         .server(server)
                         .job((String) row.get("job_grow_name"))
-                        .fame((String) row.get("fame"))
+                        .fame(toInteger(row.get("fame")))
                         .memo((String) row.get("memo"))
                         .img(img)
                         .build();
@@ -188,7 +188,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                     .server(server)
                     .nickname(characterName)
                     .job((String) row.get("job_grow_name"))
-                    .fame((String) row.get("fame"))
+                    .fame(toInteger(row.get("fame")))
                     .memo((String) row.get("memo"))
                     .img(img)
                     .clearState(toBoolean(row.get("clearState")))
@@ -397,5 +397,16 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
         if (value instanceof Boolean b) return b;
         if (value instanceof Number n) return n.byteValue() != 0;
         return false;
+    }
+
+    private static Integer toInteger(Object value) {
+        if (value == null) return null;
+        if (value instanceof Integer i) return i;
+        if (value instanceof Number n) return n.intValue();
+        try {
+            return Integer.parseInt(value.toString());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
