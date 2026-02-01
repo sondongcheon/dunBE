@@ -18,7 +18,7 @@ public class PartyMemberInRes {
     private String server;
     private String nickname;
     private String job;
-    private String fame;   // 명성
+    private Integer fame;  // 명성
     private String memo;
     private String img;
     private Boolean clearState;

@@ -37,7 +37,7 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 "LEFT JOIN characters_clear_state state ON c.id = state.id " +
                 "LEFT JOIN content_" + content + "_member m ON m.character_id = c.id " +
                 "WHERE c.adventure_id = ? " +
-                "ORDER BY c.characters_name";
+                "ORDER BY c.fame DESC";
 
         return jdbcTemplate.query(sql, this::mapToCharacterListDTO, adventureId);
     }
@@ -57,7 +57,7 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 .img(img)
                 .nickname(rs.getString("nickname"))
                 .job(rs.getString("job"))
-                .fame(rs.getString("fame"))
+                .fame(getIntegerOrNull(rs, "fame"))
                 .memo(rs.getString("memo"))
                 .groupId(getLongOrNull(rs, "groupId"))
                 .groupNum(getLongOrNull(rs, "groupNum"))
@@ -67,6 +67,11 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
 
     private static Long getLongOrNull(ResultSet rs, String column) throws SQLException {
         long value = rs.getLong(column);
+        return rs.wasNull() ? null : value;
+    }
+
+    private static Integer getIntegerOrNull(ResultSet rs, String column) throws SQLException {
+        int value = rs.getInt(column);
         return rs.wasNull() ? null : value;
     }
 

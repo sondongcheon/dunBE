@@ -15,7 +15,7 @@ public class CharacterListDTO {
     private String img;
     private String nickname;
     private String job;
-    private String fame;
+    private Integer fame;
     private String memo;
     private Long groupId;
     private Long groupNum;

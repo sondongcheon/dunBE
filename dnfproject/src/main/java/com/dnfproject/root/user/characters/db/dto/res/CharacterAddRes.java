@@ -21,7 +21,7 @@ public class CharacterAddRes {
     private String server;
     private String charactersName;
     private String jobGrowName;
-    private String fame;
+    private Integer fame;
     private String memo;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
