@@ -48,7 +48,6 @@ public class CharacterServiceImpl implements CharacterService {
     private static final DayOfWeek RESET_DAY = DayOfWeek.THURSDAY;
     
     // 레이드 관련 코드 (확장 가능)
-    private static final Set<Integer> RAID_CODES = Set.of(201, 209, 513);
     private static final String DATA_KEY_RAID_NAME = "raidName";
     private static final String DATA_KEY_REGION_NAME = "regionName";
     private static final String DATA_KEY_DUNGEON_NAME = "dungeonName";
@@ -231,6 +230,7 @@ public class CharacterServiceImpl implements CharacterService {
                     AdventureEntity newAdventure = AdventureEntity.builder()
                             .adventureName(adventureName)
                             .password(passwordEncoder.encode("1234"))
+                            .role("USER")
                             .build();
                     return adventureRepository.save(newAdventure);
                 });

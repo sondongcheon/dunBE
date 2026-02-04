@@ -30,6 +30,9 @@ public class AdventureEntity {
         this.password = encodedPassword;
     }
 
+    @Column(name = "role", length = 45)
+    private String role;
+
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
 
@@ -38,6 +41,9 @@ public class AdventureEntity {
 
     @PrePersist
     protected void onCreate() {
+        if (role == null || role.isBlank()) {
+            role = "USER";
+        }
         createAt = LocalDateTime.now();
         updateAt = LocalDateTime.now();
     }

@@ -63,7 +63,7 @@ public class JwtUtil {
                 .claim(CLAIM_CATEGORY, CATEGORY_ACCESS)
                 .claim(CLAIM_ADVENTURE_ID, adventureId)
                 .claim(CLAIM_ADVENTURE_NAME, adventureName)
-                .claim(CLAIM_ROLE, role)
+                .claim(CLAIM_ROLE, toPlainRole(role))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + accessExpirationMs))
                 .signWith(secretKey)
@@ -75,7 +75,7 @@ public class JwtUtil {
                 .claim(CLAIM_CATEGORY, CATEGORY_REFRESH)
                 .claim(CLAIM_ADVENTURE_ID, adventureId)
                 .claim(CLAIM_ADVENTURE_NAME, adventureName)
-                .claim(CLAIM_ROLE, role)
+                .claim(CLAIM_ROLE, toPlainRole(role))
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
                 .signWith(secretKey)
@@ -96,6 +96,12 @@ public class JwtUtil {
 
     public long getRefreshExpirationSeconds() {
         return refreshExpirationMs / 1000;
+    }
+
+    /** DB/입력 값(USER, ADMIN)을 그대로 반환. ROLE_ 접두사는 제거 */
+    private static String toPlainRole(String role) {
+        if (role == null || role.isBlank()) return "USER";
+        return role.startsWith("ROLE_") ? role.substring(5) : role;
     }
 
     public String resolveBearerToken(String authorization) {
