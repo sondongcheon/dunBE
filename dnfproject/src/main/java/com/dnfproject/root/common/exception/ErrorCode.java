@@ -36,9 +36,15 @@ public enum ErrorCode {
     PARTY_NOT_LEADER(HttpStatus.FORBIDDEN, "PARTY-017", "파티 이름 변경은 리더만 가능합니다."),
     ADVENTURE_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "PARTY-018", "초대할 모험단 이름을 입력해주세요."),
 
+    // 외부 API 에러
+    API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "API-007", "API 요청이 올바르지 않습니다."),
+
     //캐릭터 검색 결과 없음
     NONE_CHARACTER(HttpStatus.NOT_FOUND, "API-006", "검색 결과가 없습니다."),
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAR-002", "캐릭터를 찾을 수 없습니다."),
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-001", "공지사항을 찾을 수 없습니다."),
+    NOTICE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "BOARD-002", "제목을 입력해주세요."),
+    CLEAR_STATE_CONTENT_INVALID(HttpStatus.BAD_REQUEST, "CHAR-003", "유효하지 않은 content입니다."),
     
     //이미 등록된 캐릭터
     ALREADY_REGISTERED_CHARACTER(HttpStatus.BAD_REQUEST, "CHAR-001", "이미 등록된 캐릭터입니다."),

@@ -9,7 +9,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -42,21 +42,25 @@ public class ApiRequest {
 
             return responseEntity.getBody();
 
-        } catch (HttpStatusCodeException exception) {
-            throw ApiErrorHandle(exception);
+        } catch (RestClientResponseException exception) {
+            throw apiErrorHandle(exception);
         }
     }
 
-    private static CustomException ApiErrorHandle(HttpStatusCodeException exception) {
+    private static CustomException apiErrorHandle(RestClientResponseException exception) {
         int statusCode = exception.getStatusCode().value();
-        log.error(exception.getMessage());
-        log.error("statusCode : {}", statusCode);
-        return switch (statusCode) {
-            case 400 -> new CustomException(ErrorCode.TEST_EXCEPTION);
-            case 401 -> new CustomException(ErrorCode.RUNTIME_EXCEPTION);
+        log.error("External API error: {} - statusCode: {}", exception.getMessage(), statusCode);
 
-            default -> throw new RuntimeException(exception);
+        ErrorCode errorCode = switch (statusCode) {
+            case 400 -> ErrorCode.API_BAD_REQUEST;
+            case 401 -> ErrorCode.RUNTIME_EXCEPTION;
+            default -> null;
         };
+
+        if (errorCode != null) {
+            return new CustomException(errorCode);
+        }
+        throw new RuntimeException(exception);
     }
 
 }

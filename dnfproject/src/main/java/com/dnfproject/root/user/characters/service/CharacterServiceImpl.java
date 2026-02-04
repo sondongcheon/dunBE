@@ -10,6 +10,7 @@ import com.dnfproject.root.user.characters.db.dto.APIres.CharacterBasicInfoRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.CharacterSearchRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.TimelineRes;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
+import com.dnfproject.root.user.characters.db.dto.req.UpdateClearStateReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
 import com.dnfproject.root.user.characters.db.entity.CharactersEntity;
 import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
@@ -121,6 +122,60 @@ public class CharacterServiceImpl implements CharacterService {
         String memo = request.getMemo() != null ? request.getMemo() : "";
         character.updateMemo(memo);
         charactersRepository.save(character);
+    }
+
+    private static final Set<String> CLEAR_STATE_CONTENTS = Set.of(
+            "azure_main", "goddess_of_death_temple", "venus_goddess_of_beauty",
+            "nabel", "inae", "diregie"
+    );
+
+    @Override
+    @Transactional
+    public void updateClearStateByContent(UpdateClearStateReq request, Long adventureId) {
+        if (adventureId == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        if (request.getCharacterIds() == null || request.getCharacterIds().isEmpty()) {
+            throw new CustomException(ErrorCode.CHARACTER_ID_REQUIRED);
+        }
+        if (request.getContent() == null || request.getContent().isBlank()) {
+            throw new CustomException(ErrorCode.CONTENT_REQUIRED);
+        }
+        if (!CLEAR_STATE_CONTENTS.contains(request.getContent())) {
+            throw new CustomException(ErrorCode.CLEAR_STATE_CONTENT_INVALID);
+        }
+
+        for (Long characterId : request.getCharacterIds()) {
+            updateClearStateForCharacter(characterId, request.getContent(), adventureId);
+        }
+    }
+
+    private void updateClearStateForCharacter(Long characterId, String content, Long adventureId) {
+        CharactersEntity character = charactersRepository.findById(characterId)
+                .orElseThrow(() -> new CustomException(ErrorCode.CHARACTER_NOT_FOUND));
+
+        if (!character.getAdventure().getId().equals(adventureId)) {
+            throw new CustomException(ErrorCode.CHARACTER_NOT_OWNED);
+        }
+
+        CharactersClearStateEntity clearState = charactersClearStateRepository.findById(characterId)
+                .orElseGet(() -> {
+                    CharactersClearStateEntity newState = CharactersClearStateEntity.builder()
+                            .character(character)
+                            .build();
+                    return charactersClearStateRepository.save(newState);
+                });
+
+        switch (content) {
+            case "azure_main" -> clearState.setAzureMain(true);
+            case "goddess_of_death_temple" -> clearState.setGoddessOfDeathTemple(true);
+            case "venus_goddess_of_beauty" -> clearState.setVenusGoddessOfBeauty(true);
+            case "nabel" -> clearState.setNabel(true);
+            case "inae" -> clearState.setInae(true);
+            case "diregie" -> clearState.setDiregie(true);
+            default -> throw new CustomException(ErrorCode.CLEAR_STATE_CONTENT_INVALID);
+        }
+        charactersClearStateRepository.save(clearState);
     }
 
     private CharacterSearchRes searchCharacter(String server, String characterName) {
@@ -248,7 +303,6 @@ public class CharacterServiceImpl implements CharacterService {
                     return charactersClearStateRepository.save(newState);
                 });
         
-        // clearState 필드 업데이트 (기존 엔티티의 필드만 변경)
         clearState.updateClearState(
                 clearStateInfo.isNabel(),
                 clearStateInfo.isInae(),
