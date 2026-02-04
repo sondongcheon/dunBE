@@ -1,5 +1,6 @@
 package com.dnfproject.root.user.adventure.db.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 public class LoginResBody {
     private Long id;
     private String adventureName;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updateAt;
 
     public static LoginResBody from(LoginRes loginRes) {

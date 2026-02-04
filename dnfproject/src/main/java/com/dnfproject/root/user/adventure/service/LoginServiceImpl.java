@@ -24,8 +24,6 @@ import java.time.LocalDateTime;
 @Transactional(readOnly = true)
 public class LoginServiceImpl implements LoginService {
 
-    private static final String ROLE_USER = "USER";
-
     private final AdventureRepository adventureRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,7 +42,8 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         }
 
-        String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), ROLE_USER);
+        String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
+        String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), role);
         String refreshToken = createAndStoreRefreshToken(adventure);
         return LoginRes.of(adventure, accessToken, refreshToken);
     }
@@ -63,10 +62,11 @@ public class LoginServiceImpl implements LoginService {
         AdventureEntity adventure = AdventureEntity.builder()
                 .adventureName(request.getAdventureName())
                 .password(encodedPassword)
+                .role("USER")
                 .build();
         adventure = adventureRepository.save(adventure);
 
-        String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), ROLE_USER);
+        String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), "USER");
         String refreshToken = createAndStoreRefreshToken(adventure);
         return LoginRes.of(adventure, accessToken, refreshToken);
     }
@@ -100,13 +100,15 @@ public class LoginServiceImpl implements LoginService {
         AdventureEntity adventure = adventureRepository.findById(adventureId)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_INVALID));
 
-        String newAccessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), ROLE_USER);
+        String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
+        String newAccessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), role);
         String newRefreshToken = createAndStoreRefreshToken(adventure);
         return LoginRes.of(adventure, newAccessToken, newRefreshToken);
     }
 
     private String createAndStoreRefreshToken(AdventureEntity adventure) {
-        String refreshToken = jwtUtil.createRefreshToken(adventure.getId(), adventure.getAdventureName(), ROLE_USER);
+        String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
+        String refreshToken = jwtUtil.createRefreshToken(adventure.getId(), adventure.getAdventureName(), role);
         LocalDateTime expiresAt = LocalDateTime.now().plus(Duration.ofMillis(jwtUtil.getRefreshExpirationMs()));
 
         refreshTokenRepository.deleteById(adventure.getId());

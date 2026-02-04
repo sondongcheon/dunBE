@@ -5,9 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CreateNoticeReq {
+public class CreateCommentReq {
 
-    private boolean important;
-    private String title;
     private String content;
+    private Boolean hideName;
 }

@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @Slf4j//전역 controller에서 발생하는 예외를 잡아 처리함
 public class CustomExceptionHandler {
     @ExceptionHandler(CustomException.class)
-    protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e){
-        return ErrorResponseEntity.toResponseEntity(e.getErrorCode());
+    protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e) {
+        String location = ErrorResponseEntity.extractLocation(e);
+        log.warn("CustomException: {} at {}", e.getErrorCode(), location);
+        return ErrorResponseEntity.toResponseEntity(e.getErrorCode(), location);
     }
 
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponseEntity> handleRuntimeException(RuntimeException e) {
-        log.error("Runtime 오류 발생", e);
-        return ErrorResponseEntity.CustomRuntime(e);
+        String location = ErrorResponseEntity.extractLocation(e);
+        log.error("Runtime 오류 발생 at {}: {}", location, e.getMessage(), e);
+        return ErrorResponseEntity.CustomRuntime(e, location);
     }
 }

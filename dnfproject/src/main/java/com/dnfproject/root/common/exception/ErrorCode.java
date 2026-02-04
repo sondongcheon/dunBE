@@ -44,6 +44,9 @@ public enum ErrorCode {
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAR-002", "캐릭터를 찾을 수 없습니다."),
     NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-001", "공지사항을 찾을 수 없습니다."),
     NOTICE_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "BOARD-002", "제목을 입력해주세요."),
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "BOARD-003", "코멘트를 찾을 수 없습니다."),
+    COMMENT_CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "BOARD-004", "내용을 입력해주세요."),
+    COMMENT_NOT_OWNED(HttpStatus.FORBIDDEN, "BOARD-005", "본인이 작성한 코멘트만 수정할 수 있습니다."),
     CLEAR_STATE_CONTENT_INVALID(HttpStatus.BAD_REQUEST, "CHAR-003", "유효하지 않은 content입니다."),
     
     //이미 등록된 캐릭터

@@ -2,12 +2,9 @@ package com.dnfproject.root.board.db.entity;
 
 import com.dnfproject.root.user.adventure.db.entity.AdventureEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "board_notice")
@@ -27,25 +24,28 @@ public class NoticeEntity {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "important", nullable = false)
+    private Boolean important;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adventure_id", nullable = false)
     private AdventureEntity adventure;
 
     @Column(name = "create_at", nullable = false, updatable = false)
-    private LocalDateTime createAt;
+    private LocalDate createAt;
 
     @Column(name = "update_at")
-    private LocalDateTime updateAt;
+    private LocalDate updateAt;
 
     @PrePersist
     protected void onCreate() {
-        createAt = LocalDateTime.now();
-        updateAt = LocalDateTime.now();
+        createAt = LocalDate.now();
+        updateAt = LocalDate.now();
     }
 
     @PreUpdate
     protected void onUpdate() {
-        updateAt = LocalDateTime.now();
+        updateAt = LocalDate.now();
     }
 
     public void update(String title, String content) {

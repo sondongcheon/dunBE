@@ -39,6 +39,7 @@ public class NoticeServiceImpl implements NoticeService {
                 .orElseThrow(() -> new CustomException(ErrorCode.ADVENTURE_NOT_FOUND));
 
         NoticeEntity notice = NoticeEntity.builder()
+                .important(request.isImportant())
                 .title(request.getTitle())
                 .content(request.getContent() != null ? request.getContent() : "")
                 .adventure(adventure)

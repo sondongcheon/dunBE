@@ -26,17 +26,17 @@ public class NoticeController {
     public ResponseEntity<NoticeRes> create(
             @RequestBody CreateNoticeReq request,
             @AuthenticationPrincipal AdventurePrincipal principal) {
-        if (principal == null) {
+        if (principal == null || !"ROLE_ADMIN".equals(principal.role())) {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
         NoticeRes res = noticeService.create(request, principal.adventureId());
         return ResponseEntity.ok(res);
     }
 
-    @GetMapping
+    @GetMapping("/list/{page}")
     public ResponseEntity<NoticeListRes> getList(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @PathVariable("page") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         NoticeListRes res = noticeService.getList(pageable);
         return ResponseEntity.ok(res);
