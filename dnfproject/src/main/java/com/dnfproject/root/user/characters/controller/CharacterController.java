@@ -4,6 +4,7 @@ import com.dnfproject.root.common.config.AdventurePrincipal;
 import com.dnfproject.root.common.exception.CustomException;
 import com.dnfproject.root.common.exception.ErrorCode;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
+import com.dnfproject.root.user.characters.db.dto.req.UpdateClearStateReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
 import com.dnfproject.root.user.characters.service.CharacterService;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,17 @@ public class CharacterController {
             throw new CustomException(ErrorCode.UNAUTHORIZED);
         }
         characterService.updateMemo(request, principal.adventureId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/clear-state")
+    public ResponseEntity<Void> updateClearState(
+            @RequestBody UpdateClearStateReq request,
+            @AuthenticationPrincipal AdventurePrincipal principal) {
+        if (principal == null) {
+            throw new CustomException(ErrorCode.UNAUTHORIZED);
+        }
+        characterService.updateClearStateByContent(request, principal.adventureId());
         return ResponseEntity.ok().build();
     }
 
