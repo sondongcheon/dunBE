@@ -453,7 +453,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         // switch-case로 code별 처리 (확장 가능)
         return switch (code) {
-            case 201 -> {
+            case 201, 210 -> {
                 // 레이드 관련 코드
                 Object raidNameObj = data.get(DATA_KEY_RAID_NAME);
                 if (raidNameObj != null) {
