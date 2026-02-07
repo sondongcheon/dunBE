@@ -3,8 +3,7 @@ spring:
     name: dnfproject
 
   datasource:
-    #url: ENC(4Gc8oYP4jHFjjhE0iVukXzACOlxhVRE5lM2NQIX6foaiOP8jU7wHqebzqkDmJgLl15HrFxoZtma2GuxBMzOJwLSs7tObW6NWHSxEzM5bvG7KqkJRD5EwDbgxURh5/z3m3scLXKXw0whLjA98atGkpg==)
-    url: jdbc:mysql://3.38.192.64:3306/dnfproject?serverTimezone=Asia/Seoul
+    url: ENC(4Gc8oYP4jHFjjhE0iVukXzACOlxhVRE5lM2NQIX6foaiOP8jU7wHqebzqkDmJgLl15HrFxoZtma2GuxBMzOJwLSs7tObW6NWHSxEzM5bvG7KqkJRD5EwDbgxURh5/z3m3scLXKXw0whLjA98atGkpg==)
     username: ENC(UjM6YNNUbLSbmZUmrsVQgg==)
     password: ENC(pEgjf+s0UG/ZeZ6H86gbzJnOsYtYbjN2rtPZbcm4sGE=)
     driver-class-name: com.mysql.cj.jdbc.Driver
