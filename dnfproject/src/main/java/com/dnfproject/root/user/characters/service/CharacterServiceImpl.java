@@ -9,6 +9,7 @@ import com.dnfproject.root.user.adventure.db.repository.AdventureRepository;
 import com.dnfproject.root.user.characters.db.dto.APIres.CharacterBasicInfoRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.CharacterSearchRes;
 import com.dnfproject.root.user.characters.db.dto.APIres.TimelineRes;
+import com.dnfproject.root.user.characters.db.dto.req.AddCharactersReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateClearStateReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
@@ -76,15 +77,38 @@ public class CharacterServiceImpl implements CharacterService {
     private final CharactersClearStateRepository charactersClearStateRepository;
 
     @Override
+    public CharacterAddRes addCharacters(AddCharactersReq request) {
+        if (request == null || request.getServer() == null || request.getServer().isBlank()) {
+            throw new CustomException(ErrorCode.SERVER_REQUIRED);
+        }
+        String server = request.getServer().trim();
+        List<String> names = request.getCharacterNames() != null ? request.getCharacterNames() : List.of();
+        List<CharacterAddRes.FailedItem> failed = new ArrayList<>();
+
+        for (String characterName : names) {
+            if (characterName == null || characterName.isBlank()) {
+                continue;
+            }
+            try {
+                addCharacterInternal(server, characterName.trim());
+            } catch (CustomException e) {
+                failed.add(new CharacterAddRes.FailedItem(characterName.trim(), e.getErrorCode().getMessage()));
+            } catch (Exception e) {
+                String reason = e.getMessage() != null ? e.getMessage() : "알 수 없는 오류";
+                failed.add(new CharacterAddRes.FailedItem(characterName.trim(), reason));
+            }
+        }
+        return CharacterAddRes.builder().failed(failed).build();
+    }
+
     @Transactional
-    public CharacterAddRes addCharacter(String server, String characterName) {
+    private void addCharacterInternal(String server, String characterName) {
         CharacterSearchRes characterSearchRes = searchCharacter(server, characterName);
         CharacterSearchRes.CharacterRow searchRow = characterSearchRes.getRows().getFirst();
 
         // 기존 캐릭터 체크 및 업데이트 처리
-        Optional<CharacterAddRes> existingCharacterResult = handleExistingCharacter(searchRow);
-        if (existingCharacterResult.isPresent()) {
-            return existingCharacterResult.get();
+        if (handleExistingCharacter(searchRow)) {
+            return;
         }
 
         // 타임라인 조회
@@ -97,8 +121,7 @@ public class CharacterServiceImpl implements CharacterService {
         AdventureEntity adventure = findOrCreateAdventure(basicInfo.getAdventureName());
 
         // 캐릭터 엔티티 생성 및 저장
-        CharactersEntity savedCharacter = createAndSaveCharacter(adventure, basicInfo, searchRow, timelineRes);
-        return CharacterAddRes.from(savedCharacter);
+        createAndSaveCharacter(adventure, basicInfo, searchRow, timelineRes);
     }
 
     @Override
@@ -188,14 +211,14 @@ public class CharacterServiceImpl implements CharacterService {
         return characterSearchRes;
     }
 
-    private Optional<CharacterAddRes> handleExistingCharacter(CharacterSearchRes.CharacterRow searchRow) {
+    private boolean handleExistingCharacter(CharacterSearchRes.CharacterRow searchRow) {
         String characterId = searchRow.getCharacterId();
         String apiCharacterName = searchRow.getCharacterName();
         String apiServerId = searchRow.getServerId();
 
         Optional<CharactersEntity> existingCharacterOpt = charactersRepository.findByCharactersId(characterId);
         if (existingCharacterOpt.isEmpty()) {
-            return Optional.empty();
+            return false;
         }
 
         CharactersEntity existingCharacter = existingCharacterOpt.get();
@@ -205,9 +228,7 @@ public class CharacterServiceImpl implements CharacterService {
         // 서버는 같고 닉네임이 다름 -> 닉네임 변경권 사용
         if (apiServerId.equals(existingServer) && !apiCharacterName.equals(existingCharacterName)) {
             charactersRepository.updateCharacterName(characterId, apiCharacterName);
-            CharactersEntity updatedCharacter = charactersRepository.findByCharactersId(characterId)
-                    .orElseThrow(() -> new CustomException(ErrorCode.RUNTIME_EXCEPTION));
-            return Optional.of(CharacterAddRes.from(updatedCharacter));
+            return true;
         }
 
         // 닉네임도 같음 -> 이미 등록된 캐릭터
@@ -215,7 +236,7 @@ public class CharacterServiceImpl implements CharacterService {
             throw new CustomException(ErrorCode.ALREADY_REGISTERED_CHARACTER);
         }
 
-        return Optional.empty();
+        return false;
     }
 
     private CharacterBasicInfoRes getCharacterBasicInfo(String server, String characterId) {

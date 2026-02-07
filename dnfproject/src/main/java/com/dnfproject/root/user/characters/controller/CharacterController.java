@@ -3,6 +3,7 @@ package com.dnfproject.root.user.characters.controller;
 import com.dnfproject.root.common.config.AdventurePrincipal;
 import com.dnfproject.root.common.exception.CustomException;
 import com.dnfproject.root.common.exception.ErrorCode;
+import com.dnfproject.root.user.characters.db.dto.req.AddCharactersReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateClearStateReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
@@ -20,10 +21,8 @@ public class CharacterController {
     private final CharacterService characterService;
 
     @PostMapping
-    public ResponseEntity<CharacterAddRes> addCharacter(
-            @RequestParam("server") String server,
-            @RequestParam("characterName") String characterName) {
-        CharacterAddRes response = characterService.addCharacter(server, characterName);
+    public ResponseEntity<CharacterAddRes> addCharacters(@RequestBody AddCharactersReq request) {
+        CharacterAddRes response = characterService.addCharacters(request);
         return ResponseEntity.ok(response);
     }
 

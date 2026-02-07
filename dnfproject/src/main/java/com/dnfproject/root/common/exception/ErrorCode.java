@@ -51,6 +51,7 @@ public enum ErrorCode {
     
     //이미 등록된 캐릭터
     ALREADY_REGISTERED_CHARACTER(HttpStatus.BAD_REQUEST, "CHAR-001", "이미 등록된 캐릭터입니다."),
+    SERVER_REQUIRED(HttpStatus.BAD_REQUEST, "CHAR-004", "서버를 입력해주세요."),
 
     RUNTIME_EXCEPTION(HttpStatus.NOT_FOUND, "VALID-001", "예측되지 않은 오류가 발생했습니다. ");
 
