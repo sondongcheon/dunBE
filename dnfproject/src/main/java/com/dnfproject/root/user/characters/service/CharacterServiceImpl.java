@@ -18,9 +18,12 @@ import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
 import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
 import com.dnfproject.root.user.characters.db.repository.CharactersClearStateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
@@ -40,6 +43,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CharacterServiceImpl implements CharacterService {
+
+    @Autowired
+    @Lazy
+    private CharacterServiceImpl self;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -77,6 +84,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final CharactersClearStateRepository charactersClearStateRepository;
 
     @Override
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public CharacterAddRes addCharacters(AddCharactersReq request) {
         if (request == null || request.getServer() == null || request.getServer().isBlank()) {
             throw new CustomException(ErrorCode.SERVER_REQUIRED);
@@ -90,7 +98,7 @@ public class CharacterServiceImpl implements CharacterService {
                 continue;
             }
             try {
-                addCharacterInternal(server, characterName.trim());
+                self.addCharacterInNewTx(server, characterName.trim());
             } catch (CustomException e) {
                 failed.add(new CharacterAddRes.FailedItem(characterName.trim(), e.getErrorCode().getMessage()));
             } catch (Exception e) {
@@ -101,8 +109,8 @@ public class CharacterServiceImpl implements CharacterService {
         return CharacterAddRes.builder().failed(failed).build();
     }
 
-    @Transactional
-    private void addCharacterInternal(String server, String characterName) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+    public void addCharacterInNewTx(String server, String characterName) {
         CharacterSearchRes characterSearchRes = searchCharacter(server, characterName);
         CharacterSearchRes.CharacterRow searchRow = characterSearchRes.getRows().getFirst();
 
