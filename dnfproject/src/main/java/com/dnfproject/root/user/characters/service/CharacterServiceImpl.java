@@ -18,13 +18,12 @@ import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
 import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
 import com.dnfproject.root.user.characters.db.repository.CharactersClearStateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -43,10 +42,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CharacterServiceImpl implements CharacterService {
-
-    @Autowired
-    @Lazy
-    private CharacterServiceImpl self;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -82,6 +77,7 @@ public class CharacterServiceImpl implements CharacterService {
     private final AdventureRepository adventureRepository;
     private final CharactersRepository charactersRepository;
     private final CharactersClearStateRepository charactersClearStateRepository;
+    private final TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
@@ -98,7 +94,7 @@ public class CharacterServiceImpl implements CharacterService {
                 continue;
             }
             try {
-                self.addCharacterInNewTx(server, characterName.trim());
+                transactionTemplate.executeWithoutResult(status -> addCharacterInternal(server, characterName.trim()));
             } catch (CustomException e) {
                 failed.add(new CharacterAddRes.FailedItem(characterName.trim(), e.getErrorCode().getMessage()));
             } catch (Exception e) {
@@ -109,8 +105,7 @@ public class CharacterServiceImpl implements CharacterService {
         return CharacterAddRes.builder().failed(failed).build();
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
-    public void addCharacterInNewTx(String server, String characterName) {
+    private void addCharacterInternal(String server, String characterName) {
         CharacterSearchRes characterSearchRes = searchCharacter(server, characterName);
         CharacterSearchRes.CharacterRow searchRow = characterSearchRes.getRows().getFirst();
 
