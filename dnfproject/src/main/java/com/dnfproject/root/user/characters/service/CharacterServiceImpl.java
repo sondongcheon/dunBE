@@ -18,6 +18,8 @@ import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
 import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
 import com.dnfproject.root.user.characters.db.repository.CharactersClearStateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,7 +79,10 @@ public class CharacterServiceImpl implements CharacterService {
     private final AdventureRepository adventureRepository;
     private final CharactersRepository charactersRepository;
     private final CharactersClearStateRepository charactersClearStateRepository;
-    private final TransactionTemplate transactionTemplate;
+
+    @Autowired
+    @Qualifier("requiresNewTransactionTemplate")
+    private TransactionTemplate transactionTemplate;
 
     @Override
     @Transactional(propagation = Propagation.NOT_SUPPORTED)
