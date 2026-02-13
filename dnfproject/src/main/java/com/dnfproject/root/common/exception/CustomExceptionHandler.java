@@ -12,13 +12,13 @@ public class CustomExceptionHandler {
     protected ResponseEntity<ErrorResponseEntity> handleCustomException(CustomException e) {
         String location = ErrorResponseEntity.extractLocation(e);
         log.warn("CustomException: {} at {}", e.getErrorCode(), location);
-        return ErrorResponseEntity.toResponseEntity(e.getErrorCode(), location);
+        return ErrorResponseEntity.toResponseEntity(e.getErrorCode());
     }
 
     @ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorResponseEntity> handleRuntimeException(RuntimeException e) {
         String location = ErrorResponseEntity.extractLocation(e);
         log.error("Runtime 오류 발생 at {}: {}", location, e.getMessage(), e);
-        return ErrorResponseEntity.CustomRuntime(e, location);
+        return ErrorResponseEntity.CustomRuntime(e);
     }
 }

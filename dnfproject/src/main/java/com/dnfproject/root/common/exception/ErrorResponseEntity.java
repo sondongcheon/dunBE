@@ -11,9 +11,8 @@ public class ErrorResponseEntity {
     private String name;
     private String code;
     private String message;
-    private String location;  // 오류 발생 위치 (파일:라인)
 
-    public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode e, String location){
+    public static ResponseEntity<ErrorResponseEntity> toResponseEntity(ErrorCode e){
         return ResponseEntity
                 .status(e.getHttpStatus())
                 .body(ErrorResponseEntity.builder()
@@ -21,11 +20,10 @@ public class ErrorResponseEntity {
                         .name(e.name())
                         .code(e.getCode())
                         .message(e.getMessage())
-                        .location(location)
                         .build());
     }
 
-    public static ResponseEntity<ErrorResponseEntity> CustomRuntime(RuntimeException e, String location) {
+    public static ResponseEntity<ErrorResponseEntity> CustomRuntime(RuntimeException e) {
         return ResponseEntity
                 .status(ErrorCode.RUNTIME_EXCEPTION.getHttpStatus())
                 .body(ErrorResponseEntity.builder()
@@ -33,7 +31,6 @@ public class ErrorResponseEntity {
                         .name("RUNTIME_EXCEPTION")
                         .code(ErrorCode.RUNTIME_EXCEPTION.getCode())
                         .message(ErrorCode.RUNTIME_EXCEPTION.getMessage() + (e.getMessage() != null ? e.getMessage() : ""))
-                        .location(location)
                         .build());
     }
 
