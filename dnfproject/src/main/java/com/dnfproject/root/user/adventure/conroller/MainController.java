@@ -3,6 +3,8 @@ package com.dnfproject.root.user.adventure.conroller;
 import com.dnfproject.root.common.config.AdventurePrincipal;
 import com.dnfproject.root.common.config.CookieUtil;
 import com.dnfproject.root.common.config.JwtUtil;
+import com.dnfproject.root.common.exception.CustomException;
+import com.dnfproject.root.common.exception.ErrorCode;
 import com.dnfproject.root.user.adventure.db.dto.req.JoinReq;
 import com.dnfproject.root.user.adventure.db.dto.req.LoginReq;
 import com.dnfproject.root.user.adventure.db.dto.req.UpdatePasswordReq;
@@ -43,6 +45,9 @@ public class MainController {
     @PostMapping("/reissue")
     public ResponseEntity<LoginResBody> reissue(HttpServletRequest request) {
         String refreshToken = extractRefreshTokenFromCookie(request);
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
+        }
         LoginRes response = loginService.reissue(refreshToken);
         return buildResponseWithTokenCookies(response);
     }

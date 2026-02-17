@@ -114,7 +114,7 @@ public class LoginServiceImpl implements LoginService {
         LocalDateTime expiresAt = LocalDateTime.now().plus(Duration.ofMillis(jwtUtil.getRefreshExpirationMs()));
 
         // 해당 기기의 기존 토큰 삭제 후 새 토큰 저장
-        refreshTokenRepository.deleteByAdventureIdAndDeviceId(adventure.getId(), deviceId);
+        refreshTokenRepository.deleteByAdventure_IdAndDeviceId(adventure.getId(), deviceId);
         refreshTokenRepository.save(RefreshTokenEntity.builder()
                 .adventure(adventure)
                 .deviceId(deviceId)
