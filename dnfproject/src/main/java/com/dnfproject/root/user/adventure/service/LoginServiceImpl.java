@@ -42,9 +42,10 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(ErrorCode.LOGIN_FAILED);
         }
 
+        String deviceId = request.getDeviceId() != null ? request.getDeviceId() : generateDeviceId();
         String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
         String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), role);
-        String refreshToken = createAndStoreRefreshToken(adventure);
+        String refreshToken = createAndStoreRefreshToken(adventure, deviceId);
         return LoginRes.of(adventure, accessToken, refreshToken);
     }
 
@@ -66,8 +67,9 @@ public class LoginServiceImpl implements LoginService {
                 .build();
         adventure = adventureRepository.save(adventure);
 
+        String deviceId = request.getDeviceId() != null ? request.getDeviceId() : generateDeviceId();
         String accessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), "USER");
-        String refreshToken = createAndStoreRefreshToken(adventure);
+        String refreshToken = createAndStoreRefreshToken(adventure, deviceId);
         return LoginRes.of(adventure, accessToken, refreshToken);
     }
 
@@ -90,35 +92,42 @@ public class LoginServiceImpl implements LoginService {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
 
-        Long adventureId = jwtUtil.getAdventureId(token);
-        RefreshTokenEntity stored = refreshTokenRepository.findById(adventureId)
+        // 토큰으로 직접 조회 (다중 기기 지원)
+        RefreshTokenEntity stored = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_INVALID));
-        if (stored.isExpired() || !stored.getToken().equals(token)) {
+        
+        if (stored.isExpired()) {
             throw new CustomException(ErrorCode.REFRESH_TOKEN_INVALID);
         }
 
-        AdventureEntity adventure = adventureRepository.findById(adventureId)
-                .orElseThrow(() -> new CustomException(ErrorCode.REFRESH_TOKEN_INVALID));
-
+        AdventureEntity adventure = stored.getAdventure();
+        String deviceId = stored.getDeviceId();
         String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
         String newAccessToken = jwtUtil.createAccessToken(adventure.getId(), adventure.getAdventureName(), role);
-        String newRefreshToken = createAndStoreRefreshToken(adventure);
+        String newRefreshToken = createAndStoreRefreshToken(adventure, deviceId);
         return LoginRes.of(adventure, newAccessToken, newRefreshToken);
     }
 
-    private String createAndStoreRefreshToken(AdventureEntity adventure) {
+    private String createAndStoreRefreshToken(AdventureEntity adventure, String deviceId) {
         String role = adventure.getRole() != null && !adventure.getRole().isBlank() ? adventure.getRole() : "USER";
         String refreshToken = jwtUtil.createRefreshToken(adventure.getId(), adventure.getAdventureName(), role);
         LocalDateTime expiresAt = LocalDateTime.now().plus(Duration.ofMillis(jwtUtil.getRefreshExpirationMs()));
 
-        refreshTokenRepository.deleteById(adventure.getId());
+        // 해당 기기의 기존 토큰 삭제 후 새 토큰 저장
+        refreshTokenRepository.deleteByAdventureIdAndDeviceId(adventure.getId(), deviceId);
         refreshTokenRepository.save(RefreshTokenEntity.builder()
                 .adventure(adventure)
+                .deviceId(deviceId)
                 .token(refreshToken)
                 .expiresAt(expiresAt)
                 .build());
 
         return refreshToken;
+    }
+
+    private String generateDeviceId() {
+        // deviceId가 제공되지 않은 경우 서버에서 생성 (하지만 클라이언트에서 제공하는 것이 권장됨)
+        return java.util.UUID.randomUUID().toString();
     }
 
     @Override

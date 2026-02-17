@@ -8,4 +8,5 @@ import lombok.Setter;
 public class LoginReq {
     private String adventureName;
     private String password;
+    private String deviceId;  // 선택적 필드 (null 가능)
 }

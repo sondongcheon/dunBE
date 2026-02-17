@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "adventure_refresh_token")
+@Table(name = "adventure_refresh_token", 
+       uniqueConstraints = @UniqueConstraint(columnNames = {"adventure_id", "device_id"}))
 @Getter
 @Builder
 @NoArgsConstructor
@@ -17,14 +18,17 @@ import java.time.LocalDateTime;
 public class RefreshTokenEntity {
 
     @Id
-    private Long adventureId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @MapsId
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adventure_id", nullable = false)
     private AdventureEntity adventure;
 
-    @Column(name = "token", nullable = false, length = 1024)
+    @Column(name = "device_id", nullable = false, length = 100)
+    private String deviceId;
+
+    @Column(name = "token", nullable = false, length = 1024, unique = true)
     private String token;
 
     @Column(name = "expires_at", nullable = false)
