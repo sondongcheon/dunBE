@@ -1,5 +1,6 @@
 package com.dnfproject.root.user.adventure.conroller;
 
+import com.dnfproject.root.common.config.AdventurePrincipal;
 import com.dnfproject.root.common.config.CookieUtil;
 import com.dnfproject.root.common.config.JwtUtil;
 import com.dnfproject.root.user.adventure.db.dto.req.JoinReq;
@@ -13,12 +14,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/adventure")
@@ -80,12 +80,12 @@ public class MainController {
         return null;
     }
 
-    /*
+
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal AdventurePrincipal principal) {
         Long adventureId = principal.adventureId();
         String adventureName = principal.adventureName();
         return ResponseEntity.ok(Map.of("adventureId", adventureId, "adventureName", adventureName));
     }
-    */
+
 }
