@@ -11,6 +11,7 @@ import com.dnfproject.root.user.adventure.db.entity.RefreshTokenEntity;
 import com.dnfproject.root.user.adventure.db.repository.AdventureRepository;
 import com.dnfproject.root.user.adventure.db.repository.RefreshTokenRepository;
 import io.jsonwebtoken.ExpiredJwtException;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class LoginServiceImpl implements LoginService {
 
     private final AdventureRepository adventureRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final EntityManager entityManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
@@ -113,8 +115,9 @@ public class LoginServiceImpl implements LoginService {
         String refreshToken = jwtUtil.createRefreshToken(adventure.getId(), adventure.getAdventureName(), role);
         LocalDateTime expiresAt = LocalDateTime.now().plus(Duration.ofMillis(jwtUtil.getRefreshExpirationMs()));
 
-        // 해당 기기의 기존 토큰 삭제 후 새 토큰 저장
+        // 해당 기기의 기존 토큰 삭제 후 새 토큰 저장 (삭제가 DB에 반영된 뒤 INSERT 하도록 flush)
         refreshTokenRepository.deleteByAdventure_IdAndDeviceId(adventure.getId(), deviceId);
+        entityManager.flush();
         refreshTokenRepository.save(RefreshTokenEntity.builder()
                 .adventure(adventure)
                 .deviceId(deviceId)
