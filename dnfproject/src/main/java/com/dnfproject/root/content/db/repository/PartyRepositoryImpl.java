@@ -161,7 +161,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                 .distinct()
                 .toList();
         String groupPlaceholders = String.join(",", groupIds.stream().map(id -> "?").toList());
-        String memberSql = "SELECT pm.party_group_id, pm.character_id, c.server, c.characters_id, c.characters_name, c.job_grow_name, c.fame, c.memo, a.adventure_name, state." + content + " AS clearState " +
+        String memberSql = "SELECT pm.party_group_id, pm.character_id, c.server, c.characters_id, c.adventure_id, c.characters_name, c.job_grow_name, c.fame, c.memo, a.adventure_name, state." + content + " AS clearState " +
                 "FROM " + partyMemberTable + " pm " +
                 "JOIN characters c ON pm.character_id = c.id " +
                 "JOIN adventure a ON c.adventure_id = a.id " +
@@ -182,6 +182,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
 
             PartyMemberInRes member = PartyMemberInRes.builder()
                     .id(((Number) row.get("character_id")).longValue())
+                    .adventureId(((Number) row.get("adventure_id")).longValue())
                     .characterId((String) row.get("characters_id"))
                     .characterName(characterName)
                     .adventureName((String) row.get("adventure_name"))
