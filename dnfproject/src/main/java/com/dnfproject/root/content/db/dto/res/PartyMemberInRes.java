@@ -1,9 +1,6 @@
 package com.dnfproject.root.content.db.dto.res;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Builder
@@ -12,6 +9,7 @@ import lombok.NoArgsConstructor;
 public class PartyMemberInRes {
 
     private Long id;
+    private Long adventureId;
     private String characterId;
     private String characterName;
     private String adventureName;
@@ -21,5 +19,6 @@ public class PartyMemberInRes {
     private Integer fame;  // 명성
     private String memo;
     private String img;
+    @Setter
     private Boolean clearState;
 }
