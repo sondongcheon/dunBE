@@ -92,4 +92,16 @@ public class CharactersClearStateEntity {
     private static boolean keepIfTrue(Boolean existing, boolean fromInfo) {
         return Boolean.TRUE.equals(existing) || fromInfo;
     }
+
+    public boolean getContentState(String name) {
+        switch (name) {
+            case "azure_main" -> { return this.azureMain; }
+            case "goddess_of_death_temple" -> { return this.goddessOfDeathTemple; }
+            case "venus_goddess_of_beauty" -> {return this.venusGoddessOfBeauty; }
+            case "nabel" -> { return this.nabel; }
+            case "inae" -> { return this.inae; }
+            case "diregie" -> { return this.diregie; }
+            case null, default -> { return false; }
+        }
+    }
 }

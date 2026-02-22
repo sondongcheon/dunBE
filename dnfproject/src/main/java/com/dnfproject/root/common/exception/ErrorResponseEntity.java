@@ -30,7 +30,8 @@ public class ErrorResponseEntity {
                         .status(ErrorCode.RUNTIME_EXCEPTION.getHttpStatus().value())
                         .name("RUNTIME_EXCEPTION")
                         .code(ErrorCode.RUNTIME_EXCEPTION.getCode())
-                        .message(ErrorCode.RUNTIME_EXCEPTION.getMessage() + (e.getMessage() != null ? e.getMessage() : ""))
+                        //.message(ErrorCode.RUNTIME_EXCEPTION.getMessage() + (e.getMessage() != null ? e.getMessage() : ""))
+                        .message("RUNTIME ERROR")
                         .build());
     }
 
