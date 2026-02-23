@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,11 +87,21 @@ public class MainController {
     }
 
 
+    /** 로그인 시 모험단 정보, 미로그인 시 비회원 응답 */
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal AdventurePrincipal principal) {
-        Long adventureId = principal.adventureId();
-        String adventureName = principal.adventureName();
-        return ResponseEntity.ok(Map.of("adventureId", adventureId, "adventureName", adventureName));
+        if (principal == null) {
+            Map<String, Object> body = new HashMap<>();
+            body.put("loggedIn", false);
+            body.put("adventureId", null);
+            body.put("adventureName", null);
+            return ResponseEntity.ok(body);
+        }
+        return ResponseEntity.ok(Map.of(
+                "loggedIn", true,
+                "adventureId", principal.adventureId(),
+                "adventureName", principal.adventureName()
+        ));
     }
 
 }
