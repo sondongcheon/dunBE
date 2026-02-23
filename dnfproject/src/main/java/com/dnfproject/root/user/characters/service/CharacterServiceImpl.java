@@ -357,6 +357,47 @@ public class CharacterServiceImpl implements CharacterService {
         return timelineRes;
     }
 
+    @Transactional
+    public boolean updateClearStateByCharacter(CharactersEntity character, String contentName) {
+        String server = character.getServer();
+        String characterId = character.getCharactersId();
+
+        // 서버 이름을 영어로 변환 (API 요청용)
+        String serverEnglish = Servers.getByName(server).getEnglishName();
+
+        // 타임라인 조회
+        TimelineRes timelineRes = getCharacterTimeline(serverEnglish, characterId);
+        // Fame 최신화
+        if (timelineRes != null && timelineRes.getFame() != null) {
+            character.updateFame(timelineRes.getFame());
+            charactersRepository.save(character);
+        }
+
+        // 타임라인 분석하여 clearState 결정
+        ClearStateInfo clearStateInfo = analyzeTimelineForClearState(timelineRes);
+
+        // 기존 clearState 조회 또는 생성
+        CharactersClearStateEntity clearState = charactersClearStateRepository.findById(character.getId())
+                .orElseGet(() -> {
+                    CharactersClearStateEntity newState = CharactersClearStateEntity.builder()
+                            .character(character)
+                            .build();
+                    return charactersClearStateRepository.save(newState);
+                });
+
+        clearState.updateClearState(
+                clearStateInfo.isNabel(),
+                clearStateInfo.isInae(),
+                clearStateInfo.isDiregie(),
+                clearStateInfo.isVenusGoddessOfBeauty(),
+                clearStateInfo.isGoddessOfDeathTemple(),
+                clearStateInfo.isAzureMain()
+        );
+
+        charactersClearStateRepository.save(clearState);
+        return clearState.getContentState(contentName);
+    }
+
     private void fetchAllTimelineRows(String server, String characterId, TimelineRes.Timeline timeline) {
         String next = timeline.getNext();
         

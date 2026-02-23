@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Builder
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class PartyMemberInRes {
 
     private Long id;
+    private Long adventureId;
     private String characterId;
     private String characterName;
     private String adventureName;
@@ -21,5 +23,6 @@ public class PartyMemberInRes {
     private Integer fame;  // 명성
     private String memo;
     private String img;
-    private Boolean clearState;
+    @Setter
+    private boolean clearState;
 }

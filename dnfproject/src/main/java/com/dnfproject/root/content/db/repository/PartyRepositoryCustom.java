@@ -5,13 +5,14 @@ import com.dnfproject.root.content.db.dto.res.PartyGroupCreateRes;
 import com.dnfproject.root.content.db.dto.res.PartyInContentRes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface PartyRepositoryCustom {
 
     PartyCreateRes createParty(String content, String name, String password, Long adventureId);
 
-    List<PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId);
+    Map<Long, PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId);
 
     boolean existsAdventureInParty(String content, Long partyId, Long adventureId);
 

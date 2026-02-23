@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -18,5 +19,5 @@ import java.util.List;
 public class ContentRes {
     private List<GroupListDTO> groups;
     private List<CharacterListDTO> characters;
-    private List<PartyInContentRes> parties;
+    private Map<Long, PartyInContentRes> parties;
 }

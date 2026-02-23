@@ -39,6 +39,21 @@ public enum ErrorCode {
     // 외부 API 에러
     API_BAD_REQUEST(HttpStatus.BAD_REQUEST, "API-007", "API 요청이 올바르지 않습니다."),
 
+    // 외부 API DNF 에러 코드
+    API_DNF000(HttpStatus.NOT_FOUND, "DNF000", "유효하지 않은 서버아이디"),
+    API_DNF001(HttpStatus.NOT_FOUND, "DNF001", "유효하지 않은 캐릭터 정보"),
+    API_DNF003(HttpStatus.NOT_FOUND, "DNF003", "유효하지 않은 아이템 정보"),
+    API_DNF004(HttpStatus.NOT_FOUND, "DNF004", "유효하지 않은 경매장 및 아바타마켓 상품 정보"),
+    API_DNF005(HttpStatus.NOT_FOUND, "DNF005", "유효하지 않은 스킬 정보"),
+    API_DNF006(HttpStatus.BAD_REQUEST, "DNF006", "타임라인 검색 시간 파라미터 오류"),
+    API_DNF007(HttpStatus.BAD_REQUEST, "DNF007", "경매장 아이템 검색 갯수 제한"),
+    API_DNF008(HttpStatus.BAD_REQUEST, "DNF008", "다중 아이템 검색 갯수 제한"),
+    API_DNF009(HttpStatus.BAD_REQUEST, "DNF009", "아바타 마켓 타이틀 검색 갯수 제한"),
+    API_DNF900(HttpStatus.NOT_FOUND, "DNF900", "유효하지 않은 URL"),
+    API_DNF901(HttpStatus.BAD_REQUEST, "DNF901", "유효하지 않은 요청 파라미터"),
+    API_DNF980(HttpStatus.SERVICE_UNAVAILABLE, "DNF980", "시스템 점검"),
+    API_DNF999(HttpStatus.INTERNAL_SERVER_ERROR, "DNF999", "시스템 오류"),
+
     //캐릭터 검색 결과 없음
     NONE_CHARACTER(HttpStatus.NOT_FOUND, "API-006", "검색 결과가 없습니다."),
     CHARACTER_NOT_FOUND(HttpStatus.NOT_FOUND, "CHAR-002", "캐릭터를 찾을 수 없습니다."),
@@ -68,4 +83,25 @@ public enum ErrorCode {
     private final HttpStatus httpStatus;	// HttpStatus
     private final String code;				// ACCOUNT-001
     private final String message;			// 설명
+
+    /** 외부 API 응답의 DNF 코드 문자열로 ErrorCode 조회 (매핑 없으면 null) */
+    public static ErrorCode fromDnfApiCode(String dnfCode) {
+        if (dnfCode == null) return null;
+        return switch (dnfCode) {
+            case "DNF000" -> API_DNF000;
+            case "DNF001" -> API_DNF001;
+            case "DNF003" -> API_DNF003;
+            case "DNF004" -> API_DNF004;
+            case "DNF005" -> API_DNF005;
+            case "DNF006" -> API_DNF006;
+            case "DNF007" -> API_DNF007;
+            case "DNF008" -> API_DNF008;
+            case "DNF009" -> API_DNF009;
+            case "DNF900" -> API_DNF900;
+            case "DNF901" -> API_DNF901;
+            case "DNF980" -> API_DNF980;
+            case "DNF999" -> API_DNF999;
+            default -> null;
+        };
+    }
 }

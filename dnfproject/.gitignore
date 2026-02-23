@@ -43,4 +43,4 @@ bin/
 
 application-local.yml
 
-\dnfproject\src\main\resources\db\*.sql
+/src/main/resources/db/*.sql
