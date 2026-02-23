@@ -15,16 +15,19 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class PartyRepositoryImpl implements PartyRepositoryCustom {
 
-    private static final String IMG_URL_FORMAT = "https://img-api.neople.co.kr/df/servers/%s/characters/%s?zoom=1";
+    private static final Map<String, Integer> CONTENT_MIN_FAME = Map.of(
+            "azure_main", 44928,
+            "goddess_of_death_temple", 48987,
+            "venus_goddess_of_beauty", 41927,
+            "nabel", 47683,
+            "inae", 72687,
+            "diregie", 63256
+    );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -64,8 +67,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                 partyId);
     }
 
-    @Override
-    public List<PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId) {
+    /* //@Override
+    public List<PartyInContentRes> findPartiesByAdventureId2(String content, Long adventureId) {
         String partyTable = "content_" + content + "_party";
         String partyAdventureTable = "content_" + content + "_party_adventure";
         String partyGroupTable = "content_" + content + "_party_group";
@@ -226,6 +229,82 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                 })
                 .toList();
     }
+*/
+    @Override
+    public Map<Long, PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId) {
+        String partyTable = "content_" + content + "_party";
+        String partyAdventureTable = "content_" + content + "_party_adventure";
+        String partyGroupTable = "content_" + content + "_party_group";
+        String partyMemberTable = "content_" + content + "_party_member";
+        Integer needFame = CONTENT_MIN_FAME.get(content);
+
+        //String partyAdventureSql = "SELECT party_id, leader FROM " + partyAdventureTable + " WHERE adventure_id = ? ORDER BY party_id";
+        String sql = "SELECT padv.id, padv.party_id, p.name, padv.adventure_id, cha.id as chaid, cha.characters_name, cha.server, cha.characters_id, cha.job_grow_name, cha.fame, cha.memo, padv.leader, adv.adventure_name, g.id as group_id, g.name AS group_name, sta." + content + " as state "
+                + " FROM ( SELECT DISTINCT party_id FROM " + partyAdventureTable + " WHERE adventure_id = ? ) myp "
+                + " JOIN " + partyAdventureTable + " padv ON padv.party_id = myp.party_id "
+                + " JOIN adventure adv ON adv.id = padv.adventure_id "
+                + " JOIN characters cha ON cha.adventure_id = padv.adventure_id "
+                + " JOIN characters_clear_state sta ON sta.id = cha.id "
+                + " JOIN " + partyTable + " p ON padv.party_id = p.id "
+                + " LEFT JOIN " + partyMemberTable + " m ON m.character_id = cha.id "
+                + " LEFT JOIN " + partyGroupTable + " g ON g.id = m.party_group_id AND g.party_id = padv.party_id "
+                + " WHERE cha.fame > " + needFame
+                + " ORDER BY padv.party_id, padv.adventure_id, cha.fame DESC";
+        Map<Long, PartyInContentRes> partyMap = new HashMap<>();
+
+        List<Map<String, Object>> partyRows = jdbcTemplate.queryForList(sql, adventureId);
+        for ( Map<String, Object> row : partyRows) {
+            Long partyId = ((Number) row.get("party_id")).longValue();
+            PartyInContentRes party = partyMap.get(partyId);
+            if(party == null) {
+                party = new PartyInContentRes(partyId, (String) row.get("name"));
+            }
+            if( !party.isLeader() && toBoolean(row.get("leader")) && adventureId.equals(((Number) row.get("adventure_id")).longValue())) {
+                party.setLeader(toBoolean(row.get("leader")));
+            }
+
+            Long rowAdventureId = ((Number) row.get("adventure_id")).longValue();
+            AdventureInPartyRes adventure = party.getAdventures().get(rowAdventureId);
+            if(adventure == null) {
+                adventure = new AdventureInPartyRes(rowAdventureId, (String) row.get("adventure_name"));
+                party.getAdventures().put(rowAdventureId, adventure);
+            }
+            adventure.addCharacter(
+                    ((Number) row.get("chaid")).longValue(),
+                    (String) row.get("characters_id"),
+                    (String) row.get("characters_name"),
+                    (String) row.get("server"),
+                    (String) row.get("job_grow_name"),
+                    toInteger(row.get("fame")),
+                    (String) row.get("memo")
+                    );
+
+            if( row.get("group_id") != null ) {
+                Long rowGroupId = ((Number) row.get("group_id")).longValue();
+                PartyGroupInRes partyRes = party.getGroups().get(rowGroupId);
+                if (partyRes == null) {
+                    partyRes = new PartyGroupInRes(rowGroupId, (String) row.get("group_name"));
+                    party.getGroups().put(rowGroupId, partyRes);
+                }
+                partyRes.addMember(
+                        ((Number) row.get("chaid")).longValue(),
+                        ((Number) row.get("adventure_id")).longValue(),
+                        (String) row.get("characters_id"),
+                        (String) row.get("characters_name"),
+                        (String) row.get("adventure_name"),
+                        (String) row.get("server"),
+                        (String) row.get("job_grow_name"),
+                        toInteger(row.get("fame")),
+                        (String) row.get("memo"),
+                        toBoolean(row.get("state"))
+                );
+            }
+
+            partyMap.put(partyId, party);
+        }
+        return partyMap;
+    }
+
 
     private static List<AdventureInPartyRes> buildAdventuresList(
             List<Long> adventureIds,

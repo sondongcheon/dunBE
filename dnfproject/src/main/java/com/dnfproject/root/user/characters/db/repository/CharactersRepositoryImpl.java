@@ -16,12 +16,12 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
     private static final String IMG_URL_FORMAT = "https://img-api.neople.co.kr/df/servers/%s/characters/%s?zoom=1";
 
     private static final Map<String, Integer> CONTENT_MIN_FAME = Map.of(
-            "azure_main", 44929,
-            "goddess_of_death_temple", 48988,
-            "venus_goddess_of_beauty", 41929,
-            "nabel", 47684,
-            "inae", 72688,
-            "diregie", 63257
+            "azure_main", 44928,
+            "goddess_of_death_temple", 48987,
+            "venus_goddess_of_beauty", 41928,
+            "nabel", 47683,
+            "inae", 72687,
+            "diregie", 63256
     );
 
     private final JdbcTemplate jdbcTemplate;

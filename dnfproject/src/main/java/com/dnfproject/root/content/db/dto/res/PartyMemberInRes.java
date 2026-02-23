@@ -20,5 +20,6 @@ public class PartyMemberInRes {
     private String memo;
     private String img;
     @Setter
-    private Boolean clearState;
+    private boolean clearState;
+
 }
