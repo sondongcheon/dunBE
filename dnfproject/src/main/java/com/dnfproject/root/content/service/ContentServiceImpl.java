@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +41,16 @@ public class ContentServiceImpl implements ContentService {
         entityManager.flush();
 
         // 파티에 참여 중인 다른 모험단들의 clearState도 최신화 (내 ID 제외하여 중복 최신화 방지)
-        List<PartyInContentRes> parties = partyRepositoryCustom.findPartiesByAdventureId(contentName, adventureId);
-        for (PartyInContentRes party : parties) {
-            if (party.getGroups() == null) continue;
-            for (PartyGroupInRes pgr : party.getGroups()) {
-                for (PartyMemberInRes pmr : pgr.getMembers()) {
-                    if (pmr.getAdventureId().equals(adventureId)) continue;
-                    updateClearStatesByAdventureId(pmr.getId(), contentName, pmr);
-                }
-            }
-        }
+        Map<Long, PartyInContentRes> parties = partyRepositoryCustom.findPartiesByAdventureId(contentName, adventureId);
+//        for (PartyInContentRes party : parties) {
+//            if (party.getGroups() == null) continue;
+//            for (PartyGroupInRes pgr : party.getGroups()) {
+//                for (PartyMemberInRes pmr : pgr.getMembers()) {
+//                    if (pmr.getAdventureId().equals(adventureId)) continue;
+//                    updateClearStatesByAdventureId(pmr.getId(), contentName, pmr);
+//                }
+//            }
+//        }
 
         List<GroupListDTO> groupList = groupRepository.findGroupsByAdventureId(adventureId, contentName);
         List<CharacterListDTO> characterList = charactersRepository.findCharactersByAdventureId(adventureId, contentName);
