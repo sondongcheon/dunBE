@@ -42,3 +42,5 @@ bin/
 .DS_Store
 
 application-local.yml
+
+\dnfproject\src\main\resources\db\*.sql

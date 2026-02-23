@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: dnfproject
+
+  datasource:
+    url: ENC(4Gc8oYP4jHFjjhE0iVukXzACOlxhVRE5lM2NQIX6foaiOP8jU7wHqebzqkDmJgLl15HrFxoZtma2GuxBMzOJwLSs7tObW6NWHSxEzM5bvG7KqkJRD5EwDbgxURh5/z3m3scLXKXw0whLjA98atGkpg==)
+    username: ENC(UjM6YNNUbLSbmZUmrsVQgg==)
+    password: ENC(pEgjf+s0UG/ZeZ6H86gbzJnOsYtYbjN2rtPZbcm4sGE=)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    #show-sql: true #로그창에 SQL문 출력
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  jwt:
+    #secret: ${JWT_SECRET:dnfproject-jwt-secret-key-minimum-32bytes-for-hs256}
+    secret: ENC(/Lu+5ujjPk+thbrUzOTHgDkJuPsF4I7JYoLrOrUDiV1Znh1Aasv5tPZSF1wQZT6OREpSMGp1gVc=)
+    access-expiration-ms: 86400000
+    refresh-expiration-ms: 604800000
+
+server:
+  servlet:
+    context-path: /api
+  port: 8090
+
+logging:
+  level:
+    root: INFO
+    com.dnfproject: DEBUG
+
+api:
+  key: ENC(ru/0+/rvnh8UBQLm9YTYXtcsbEvVJ9tz1qUv3NpsEFoLY5qFoHGs27ZdUcsgHMLp)
