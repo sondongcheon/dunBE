@@ -23,6 +23,20 @@ spring:
     access-expiration-ms: 86400000
     refresh-expiration-ms: 604800000
 
+  data:
+    redis:
+      host: ENC(Sf6/rXeHuCWh31kl+5rPV+Npy6j1IIvx)
+      port: ENC(sU8Pu1IPNSuxfGUWybzd0Q==)
+      username: ENC(QTxM6Ujn0WIq5CKvg6xhag==)
+      password: ENC(Fe7sReKpj6VQWiYLdmyFjQ==)  # 필요 시 설정
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
 server:
   servlet:
     context-path: /api
