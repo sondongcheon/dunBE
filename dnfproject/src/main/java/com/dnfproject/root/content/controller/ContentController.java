@@ -16,11 +16,15 @@ import com.dnfproject.root.content.db.dto.req.UpdatePartyGroupNameReq;
 import com.dnfproject.root.content.db.dto.req.UpdatePartyNameReq;
 import com.dnfproject.root.content.db.dto.req.CreatePartyReq;
 import com.dnfproject.root.content.db.dto.req.JoinPartyReq;
+import com.dnfproject.root.content.db.dto.req.SavePartyFormationRaidReq;
 import com.dnfproject.root.content.db.dto.res.ContentRes;
+import com.dnfproject.root.content.db.dto.res.PartyFormationPageLoadRes;
+import com.dnfproject.root.content.db.dto.res.PartyFormationRes;
 import com.dnfproject.root.content.db.dto.res.PartyCreateRes;
 import com.dnfproject.root.content.db.dto.res.GroupCreateRes;
 import com.dnfproject.root.content.db.dto.res.PartyGroupCreateRes;
 import com.dnfproject.root.content.service.ContentService;
+import com.dnfproject.root.content.service.PartyFormationService;
 import com.dnfproject.root.content.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +38,7 @@ public class ContentController {
 
     private final ContentService contentService;
     private final PartyService partyService;
+    private final PartyFormationService partyFormationService;
 
     @GetMapping
     public ResponseEntity<ContentRes> getContent(
@@ -204,4 +209,30 @@ public class ContentController {
         return ResponseEntity.noContent().build();
     }
 
+    /** Party 편성 전체 조회 (페이지 진입 시) */
+    @GetMapping("/party/formation")
+    public ResponseEntity<PartyFormationRes> getPartyFormation(
+            @RequestParam("contentName") String contentName,
+            @RequestParam("partyId") String partyId) {
+        PartyFormationRes res = partyFormationService.getFormation(contentName, partyId);
+        return ResponseEntity.ok(res);
+    }
+
+    /** 편성 페이지 로딩: 캐릭터 목록 + 편성 목록 한 번에 조회 */
+    @GetMapping("/party/formation/page")
+    public ResponseEntity<PartyFormationPageLoadRes> getPartyFormationPageLoad(
+            @RequestParam("contentName") String contentName,
+            @RequestParam("partyId") String partyId,
+            @RequestParam("adventureId") Long adventureId) {
+        PartyFormationPageLoadRes res = contentService.getPartyFormationPageLoad(contentName, partyId, adventureId);
+        return ResponseEntity.ok(res);
+    }
+
+    /** Party 편성 공대 단위 저장 (페이지 조작 시) */
+    @PutMapping("/party/formation")
+    public ResponseEntity<Void> savePartyFormationRaid(
+            @RequestBody SavePartyFormationRaidReq request) {
+        partyFormationService.saveRaid(request);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -14,6 +14,8 @@ public interface PartyRepositoryCustom {
 
     Map<Long, PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId);
 
+    Optional<PartyInContentRes> findPartyByAdventureIdAndPartyId(String content, Long adventureId, Long partyId);
+
     boolean existsAdventureInParty(String content, Long partyId, Long adventureId);
 
     PartyGroupCreateRes createPartyGroup(String content, Long partyId, String name);

@@ -14,7 +14,7 @@ public class RedisConfig {
      * RedisTemplate<String, Object> - 키는 문자열, 값은 JSON 직렬화.
      * 객체 저장/조회 시 사용. 단순 문자열만 쓸 경우 StringRedisTemplate 사용 권장.
      */
-    @Bean
+    @Bean("jsonRedisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);

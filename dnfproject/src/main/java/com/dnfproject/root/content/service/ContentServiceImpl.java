@@ -25,9 +25,10 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ContentServiceImpl implements ContentService {
-    
+
     private final GroupRepository groupRepository;
     private final PartyRepositoryCustom partyRepositoryCustom;
+    private final PartyFormationService partyFormationService;
     private final CharactersRepository charactersRepository;
     private final CharacterServiceImpl characterService;
     private final EntityManager entityManager;
@@ -77,6 +78,17 @@ public class ContentServiceImpl implements ContentService {
         }
 
         return groupRepository.createGroup(request.getContent(), adventureId, request.getName());
+    }
+
+    @Override
+    public PartyFormationPageLoadRes getPartyFormationPageLoad(String contentName, String partyId, Long adventureId) {
+        Long partyIdLong = Long.parseLong(partyId);
+        var characterList = partyRepositoryCustom.findPartyByAdventureIdAndPartyId(contentName, adventureId, partyIdLong).orElse(null);
+        var formationRes = partyFormationService.getFormation(contentName, partyId);
+        return PartyFormationPageLoadRes.builder()
+                .characterList(characterList)
+                .formationList(formationRes.getRaids())
+                .build();
     }
 
     private void updateClearStatesByAdventureId(Long adventureId) {
