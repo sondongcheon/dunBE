@@ -335,11 +335,18 @@ public class PartyServiceImpl implements PartyService {
             throw new CustomException(ErrorCode.PARTY_ID_REQUIRED);
         }
 
-        if (!partyRepositoryCustom.isPartyLeader(request.getContent(), request.getPartyId(), adventureId)) {
-            throw new CustomException(ErrorCode.PARTY_NOT_LEADER);
+        boolean isLeader = partyRepositoryCustom.isPartyLeader(request.getContent(), request.getPartyId(), adventureId);
+        if (isLeader) {
+            // 리더: 파티 전체 삭제
+            partyRepositoryCustom.deleteParty(request.getContent(), request.getPartyId());
+        } else {
+            // 비리더: 파티 탈퇴 (내 캐릭터 제거 후 party_adventure에서 제거)
+            if (!partyRepositoryCustom.existsAdventureInParty(request.getContent(), request.getPartyId(), adventureId)) {
+                throw new CustomException(ErrorCode.PARTY_ACCESS_DENIED);
+            }
+            partyRepositoryCustom.deletePartyMembersByPartyIdAndAdventureId(request.getContent(), request.getPartyId(), adventureId);
+            partyRepositoryCustom.removeAdventureFromParty(request.getContent(), request.getPartyId(), adventureId);
         }
-
-        partyRepositoryCustom.deleteParty(request.getContent(), request.getPartyId());
     }
 
     private static boolean isBlank(String value) {

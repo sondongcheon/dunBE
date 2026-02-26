@@ -44,5 +44,15 @@ public interface PartyRepositoryCustom {
 
     void deleteParty(String content, Long partyId);
 
+    /**
+     * 파티 탈퇴: 해당 파티의 모든 그룹에서 특정 adventure의 캐릭터들을 제거
+     */
+    void deletePartyMembersByPartyIdAndAdventureId(String content, Long partyId, Long adventureId);
+
+    /**
+     * 파티 탈퇴: party_adventure에서 해당 adventure 제거
+     */
+    void removeAdventureFromParty(String content, Long partyId, Long adventureId);
+
     record PartyJoinInfo(Long partyId, String partyName, String password) {}
 }

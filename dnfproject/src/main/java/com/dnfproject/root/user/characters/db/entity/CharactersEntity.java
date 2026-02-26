@@ -50,6 +50,9 @@ public class CharactersEntity {
     @Column(name = "update_at")
     private LocalDateTime updateAt;
 
+    @OneToOne(mappedBy = "character", fetch = FetchType.LAZY)
+    private CharactersClearStateEntity clearState;
+
     @PrePersist
     protected void onCreate() {
         createAt = LocalDateTime.now();
