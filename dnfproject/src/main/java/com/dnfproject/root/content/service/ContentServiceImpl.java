@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -98,9 +99,20 @@ public class ContentServiceImpl implements ContentService {
         }
     }
 
-    private void updateClearStatesByAdventureId(Long adventureId, String contentName, PartyMemberInRes pmr) {
-        CharactersEntity character = charactersRepository.findById(adventureId).orElseThrow();
-        pmr.setClearState(characterService.updateClearStateByCharacter(character, contentName));
+    /**
+     * 파티 멤버(다른 모험단)의 clearState 최신화.
+     * character + characters_clear_state를 한 번에 조회 후, update_at이 5분 미경과면 API 호출 없이 조회값으로 설정하고,
+     * 5분 경과 시에만 API 갱신하며 조회한 엔티티를 재활용해 추가 조회를 하지 않는다.
+     */
+    private void updateClearStatesByAdventureId(Long characterId, String contentName, PartyMemberInRes pmr) {
+        CharactersEntity character = charactersRepository.findByIdWithClearState(characterId).orElseThrow();
+        var clearState = character.getClearState();
+
+        if (clearState != null && clearState.getUpdateAt().isAfter(LocalDateTime.now().minusMinutes(1))) {
+            pmr.setClearState(clearState.getContentState(contentName));
+            return;
+        }
+        pmr.setClearState(characterService.updateClearStateByCharacter(character, contentName, clearState));
     }
     
     @Override

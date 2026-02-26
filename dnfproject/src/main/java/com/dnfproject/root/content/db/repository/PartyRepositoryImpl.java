@@ -381,6 +381,23 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
         jdbcTemplate.update(deletePartySql, partyId);
     }
 
+    @Override
+    public void deletePartyMembersByPartyIdAndAdventureId(String content, Long partyId, Long adventureId) {
+        String partyMemberTable = "content_" + content + "_party_member";
+        String partyGroupTable = "content_" + content + "_party_group";
+        String sql = "DELETE FROM " + partyMemberTable
+                + " WHERE party_group_id IN (SELECT id FROM " + partyGroupTable + " WHERE party_id = ?)"
+                + " AND character_id IN (SELECT id FROM characters WHERE adventure_id = ?)";
+        jdbcTemplate.update(sql, partyId, adventureId);
+    }
+
+    @Override
+    public void removeAdventureFromParty(String content, Long partyId, Long adventureId) {
+        String partyAdventureTable = "content_" + content + "_party_adventure";
+        String sql = "DELETE FROM " + partyAdventureTable + " WHERE party_id = ? AND adventure_id = ?";
+        jdbcTemplate.update(sql, partyId, adventureId);
+    }
+
     private static boolean toBoolean(Object value) {
         if (value == null) return false;
         if (value instanceof Boolean b) return b;

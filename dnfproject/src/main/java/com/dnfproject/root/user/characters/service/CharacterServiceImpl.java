@@ -357,8 +357,11 @@ public class CharacterServiceImpl implements CharacterService {
         return timelineRes;
     }
 
+    /**
+     * 이미 조회된 clearState가 있으면 재활용(findById 생략). null이면 내부에서 조회 후 갱신.
+     */
     @Transactional
-    public boolean updateClearStateByCharacter(CharactersEntity character, String contentName) {
+    public boolean updateClearStateByCharacter(CharactersEntity character, String contentName, CharactersClearStateEntity existingClearState) {
         String server = character.getServer();
         String characterId = character.getCharactersId();
 
@@ -376,14 +379,16 @@ public class CharacterServiceImpl implements CharacterService {
         // 타임라인 분석하여 clearState 결정
         ClearStateInfo clearStateInfo = analyzeTimelineForClearState(timelineRes);
 
-        // 기존 clearState 조회 또는 생성
-        CharactersClearStateEntity clearState = charactersClearStateRepository.findById(character.getId())
-                .orElseGet(() -> {
-                    CharactersClearStateEntity newState = CharactersClearStateEntity.builder()
-                            .character(character)
-                            .build();
-                    return charactersClearStateRepository.save(newState);
-                });
+        // 기존 clearState 조회 또는 생성 (이미 있으면 재활용)
+        CharactersClearStateEntity clearState = existingClearState != null
+                ? existingClearState
+                : charactersClearStateRepository.findById(character.getId())
+                        .orElseGet(() -> {
+                            CharactersClearStateEntity newState = CharactersClearStateEntity.builder()
+                                    .character(character)
+                                    .build();
+                            return charactersClearStateRepository.save(newState);
+                        });
 
         clearState.updateClearState(
                 clearStateInfo.isNabel(),
