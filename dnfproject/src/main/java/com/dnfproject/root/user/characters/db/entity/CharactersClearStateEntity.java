@@ -55,6 +55,14 @@ public class CharactersClearStateEntity {
     @Setter
     private Boolean freedNightmare;
 
+    @Column(name = "star_turtle_grand_library", nullable = false)
+    @Setter
+    private Boolean starTurtleGrandLibrary;
+
+    @Column(name = "heretics_castle", nullable = false)
+    @Setter
+    private Boolean hereticsCastle;
+
     @PrePersist
     protected void onCreate() {
         // 모든 Boolean 필드는 Builder에서 설정된 값을 유지 (null일 때만 false로 설정)
@@ -65,6 +73,8 @@ public class CharactersClearStateEntity {
         inae = defaultIfNull(inae);
         diregie = defaultIfNull(diregie);
         freedNightmare = defaultIfNull(freedNightmare);
+        starTurtleGrandLibrary = defaultIfNull(starTurtleGrandLibrary);
+        hereticsCastle = defaultIfNull(hereticsCastle);
         updateAt = LocalDateTime.now();
     }
 
@@ -85,7 +95,8 @@ public class CharactersClearStateEntity {
 
     /** 타임라인 분석 결과로 갱신. 기존 true면 유지 (한번 클리어되면 유지) */
     public void updateClearState(boolean nabel, boolean inae, boolean diregie, boolean venusGoddessOfBeauty,
-                                 boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare) {
+                                 boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare,
+                                 boolean starTurtleGrandLibrary, boolean hereticsCastle) {
         this.nabel = keepIfTrue(this.nabel, nabel);
         this.inae = keepIfTrue(this.inae, inae);
         this.diregie = keepIfTrue(this.diregie, diregie);
@@ -93,6 +104,8 @@ public class CharactersClearStateEntity {
         this.goddessOfDeathTemple = keepIfTrue(this.goddessOfDeathTemple, goddessOfDeathTemple);
         this.azureMain = keepIfTrue(this.azureMain, azureMain);
         this.freedNightmare = keepIfTrue(this.freedNightmare, freedNightmare);
+        this.starTurtleGrandLibrary = keepIfTrue(this.starTurtleGrandLibrary, starTurtleGrandLibrary);
+        this.hereticsCastle = keepIfTrue(this.hereticsCastle, hereticsCastle);
     }
 
     private static boolean keepIfTrue(Boolean existing, boolean fromInfo) {
@@ -108,6 +121,8 @@ public class CharactersClearStateEntity {
             case "inae" -> { return this.inae; }
             case "diregie" -> { return this.diregie; }
             case "freed_nightmare" -> { return this.freedNightmare; }
+            case "star_turtle_grand_library" -> { return this.starTurtleGrandLibrary; }
+            case "heretics_castle" -> { return this.hereticsCastle; }
             case null, default -> { return false; }
         }
     }

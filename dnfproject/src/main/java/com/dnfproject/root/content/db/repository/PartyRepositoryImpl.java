@@ -27,7 +27,9 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
             "nabel", 47683,
             "inae", 72687,
             "diregie", 63256,
-            "freed_nightmare", 71179
+            "freed_nightmare", 71178,
+            "star_turtle_grand_library", 91581,
+            "heretics_castle", 101852
     );
     private final JdbcTemplate jdbcTemplate;
 
@@ -140,6 +142,21 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
             partyMap.put(partyId, party);
         }
         return partyMap;
+    }
+
+    @Override
+    public List<PartyRepositoryCustom.EmptyPartyGroupRow> findEmptyPartyGroupsByAdventureId(String content, Long adventureId) {
+        String partyGroupTable = "content_" + content + "_party_group";
+        String partyMemberTable = "content_" + content + "_party_member";
+        String partyAdventureTable = "content_" + content + "_party_adventure";
+        String sql = "SELECT g.party_id, g.id, g.name FROM " + partyGroupTable + " g "
+                + "WHERE g.party_id IN (SELECT DISTINCT party_id FROM " + partyAdventureTable + " WHERE adventure_id = ?) "
+                + "AND NOT EXISTS (SELECT 1 FROM " + partyMemberTable + " m WHERE m.party_group_id = g.id)";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new PartyRepositoryCustom.EmptyPartyGroupRow(
+                rs.getLong("party_id"),
+                rs.getLong("id"),
+                rs.getString("name")
+        ), adventureId);
     }
 
     @Override

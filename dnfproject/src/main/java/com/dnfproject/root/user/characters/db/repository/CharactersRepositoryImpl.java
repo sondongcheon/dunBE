@@ -22,7 +22,9 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
             "nabel", 47683,
             "inae", 72687,
             "diregie", 63256,
-            "freed_nightmare", 71179
+            "freed_nightmare", 71179,
+            "star_turtle_grand_library", 91581,
+            "heretics_castle", 101852
     );
 
     private final JdbcTemplate jdbcTemplate;

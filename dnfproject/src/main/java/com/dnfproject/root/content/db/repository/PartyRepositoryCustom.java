@@ -14,6 +14,11 @@ public interface PartyRepositoryCustom {
 
     Map<Long, PartyInContentRes> findPartiesByAdventureId(String content, Long adventureId);
 
+    /**
+     * 내가 속한 파티들에 대해, 멤버가 한 명도 없는 파티 그룹만 조회 (메인 조회에서 누락되는 그룹 보강용).
+     */
+    List<EmptyPartyGroupRow> findEmptyPartyGroupsByAdventureId(String content, Long adventureId);
+
     Optional<PartyInContentRes> findPartyByAdventureIdAndPartyId(String content, Long adventureId, Long partyId);
 
     boolean existsAdventureInParty(String content, Long partyId, Long adventureId);
@@ -55,4 +60,6 @@ public interface PartyRepositoryCustom {
     void removeAdventureFromParty(String content, Long partyId, Long adventureId);
 
     record PartyJoinInfo(Long partyId, String partyName, String password) {}
+
+    record EmptyPartyGroupRow(Long partyId, Long groupId, String name) {}
 }

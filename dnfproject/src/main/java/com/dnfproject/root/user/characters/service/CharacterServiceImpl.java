@@ -73,7 +73,9 @@ public class CharacterServiceImpl implements CharacterService {
     private static final Map<String, String> DUNGEON_NAME_TO_FIELD = Map.of(
             "침묵의 성소", "goddessOfDeathTemple",
             "애쥬어 메인", "azureMain",
-            "해방된 흉몽", "freedNightmare"
+            "해방된 흉몽", "freedNightmare",
+            "별거북 대서고", "starTurtleGrandLibrary",
+            "배교자의 성", "hereticsCastle"
     );
 
     private final ObjectMapper objectMapper;
@@ -157,7 +159,8 @@ public class CharacterServiceImpl implements CharacterService {
 
     private static final Set<String> CLEAR_STATE_CONTENTS = Set.of(
             "azure_main", "goddess_of_death_temple", "venus_goddess_of_beauty",
-            "nabel", "inae", "diregie", "freed_nightmare"
+            "nabel", "inae", "diregie", "freed_nightmare",
+            "star_turtle_grand_library", "heretics_castle"
     );
 
     @Override
@@ -205,6 +208,8 @@ public class CharacterServiceImpl implements CharacterService {
             case "inae" -> clearState.setInae(true);
             case "diregie" -> clearState.setDiregie(true);
             case "freed_nightmare" -> clearState.setFreedNightmare(true);
+            case "star_turtle_grand_library" -> clearState.setStarTurtleGrandLibrary(true);
+            case "heretics_castle" -> clearState.setHereticsCastle(true);
             default -> throw new CustomException(ErrorCode.CLEAR_STATE_CONTENT_INVALID);
         }
         charactersClearStateRepository.save(clearState);
@@ -300,6 +305,8 @@ public class CharacterServiceImpl implements CharacterService {
                 .goddessOfDeathTemple(clearStateInfo.isGoddessOfDeathTemple())
                 .azureMain(clearStateInfo.isAzureMain())
                 .freedNightmare(clearStateInfo.isFreedNightmare())
+                .starTurtleGrandLibrary(clearStateInfo.isStarTurtleGrandLibrary())
+                .hereticsCastle(clearStateInfo.isHereticsCastle())
                 .build();
         charactersClearStateRepository.save(clearState);
 
@@ -342,7 +349,9 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isVenusGoddessOfBeauty(),
                 clearStateInfo.isGoddessOfDeathTemple(),
                 clearStateInfo.isAzureMain(),
-                clearStateInfo.isFreedNightmare()
+                clearStateInfo.isFreedNightmare(),
+                clearStateInfo.isStarTurtleGrandLibrary(),
+                clearStateInfo.isHereticsCastle()
         );
         
         charactersClearStateRepository.save(clearState);
@@ -401,7 +410,9 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isVenusGoddessOfBeauty(),
                 clearStateInfo.isGoddessOfDeathTemple(),
                 clearStateInfo.isAzureMain(),
-                clearStateInfo.isFreedNightmare()
+                clearStateInfo.isFreedNightmare(),
+                clearStateInfo.isStarTurtleGrandLibrary(),
+                clearStateInfo.isHereticsCastle()
         );
 
         charactersClearStateRepository.save(clearState);
@@ -545,7 +556,9 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateMap.getOrDefault("venusGoddessOfBeauty", false),
                 clearStateMap.getOrDefault("goddessOfDeathTemple", false),
                 clearStateMap.getOrDefault("azureMain", false),
-                clearStateMap.getOrDefault("freedNightmare", false)
+                clearStateMap.getOrDefault("freedNightmare", false),
+                clearStateMap.getOrDefault("starTurtleGrandLibrary", false),
+                clearStateMap.getOrDefault("hereticsCastle", false)
         );
     }
 
@@ -557,9 +570,12 @@ public class CharacterServiceImpl implements CharacterService {
         private final boolean goddessOfDeathTemple;
         private final boolean azureMain;
         private final boolean freedNightmare;
+        private final boolean starTurtleGrandLibrary;
+        private final boolean hereticsCastle;
 
         public ClearStateInfo(boolean nabel, boolean inae, boolean diregie, boolean venusGoddessOfBeauty,
-                            boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare) {
+                            boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare,
+                            boolean starTurtleGrandLibrary, boolean hereticsCastle) {
             this.nabel = nabel;
             this.inae = inae;
             this.diregie = diregie;
@@ -567,6 +583,8 @@ public class CharacterServiceImpl implements CharacterService {
             this.goddessOfDeathTemple = goddessOfDeathTemple;
             this.azureMain = azureMain;
             this.freedNightmare = freedNightmare;
+            this.starTurtleGrandLibrary = starTurtleGrandLibrary;
+            this.hereticsCastle = hereticsCastle;
         }
 
         public boolean isNabel() {
@@ -595,6 +613,14 @@ public class CharacterServiceImpl implements CharacterService {
 
         public boolean isFreedNightmare() {
             return freedNightmare;
+        }
+
+        public boolean isStarTurtleGrandLibrary() {
+            return starTurtleGrandLibrary;
+        }
+
+        public boolean isHereticsCastle() {
+            return hereticsCastle;
         }
     }
 }

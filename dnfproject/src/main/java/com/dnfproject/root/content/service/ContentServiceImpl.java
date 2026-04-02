@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,7 @@ public class ContentServiceImpl implements ContentService {
 
         // 파티에 참여 중인 다른 모험단들의 clearState도 최신화 (내 ID 제외하여 중복 최신화 방지)
         Map<Long, PartyInContentRes> parties = partyRepositoryCustom.findPartiesByAdventureId(contentName, adventureId);
+        mergeEmptyPartyGroups(parties, partyRepositoryCustom.findEmptyPartyGroupsByAdventureId(contentName, adventureId));
         for (PartyInContentRes party : parties.values()) {
             if (party.getGroups() == null) continue;
             for (PartyGroupInRes pgr : party.getGroups().values()) {
@@ -90,6 +92,25 @@ public class ContentServiceImpl implements ContentService {
                 .characterList(characterList)
                 .formationList(formationRes.getRaids())
                 .build();
+    }
+
+    /**
+     * 메인 파티 조회는 party_member가 없으면 그룹 행이 생기지 않으므로, 멤버 0인 그룹을 별도 조회해 DTO에 합친다.
+     */
+    private void mergeEmptyPartyGroups(Map<Long, PartyInContentRes> parties, List<PartyRepositoryCustom.EmptyPartyGroupRow> emptyGroups) {
+        if (parties == null || parties.isEmpty() || emptyGroups == null || emptyGroups.isEmpty()) {
+            return;
+        }
+        for (PartyRepositoryCustom.EmptyPartyGroupRow row : emptyGroups) {
+            PartyInContentRes party = parties.get(row.partyId());
+            if (party == null || party.getGroups() == null) {
+                continue;
+            }
+            if (party.getGroups().containsKey(row.groupId())) {
+                continue;
+            }
+            party.getGroups().put(row.groupId(), new PartyGroupInRes(row.groupId(), Objects.requireNonNullElse(row.name(), "")));
+        }
     }
 
     private void updateClearStatesByAdventureId(Long adventureId) {
