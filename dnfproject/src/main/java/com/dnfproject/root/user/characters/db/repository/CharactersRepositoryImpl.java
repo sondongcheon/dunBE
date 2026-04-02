@@ -21,7 +21,8 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
             "venus_goddess_of_beauty", 41928,
             "nabel", 47683,
             "inae", 72687,
-            "diregie", 63256
+            "diregie", 63256,
+            "freed_nightmare", 71179
     );
 
     private final JdbcTemplate jdbcTemplate;

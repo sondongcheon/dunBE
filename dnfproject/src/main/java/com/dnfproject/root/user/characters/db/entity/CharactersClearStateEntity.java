@@ -51,6 +51,10 @@ public class CharactersClearStateEntity {
     @Setter
     private Boolean diregie;
 
+    @Column(name = "freed_nightmare", nullable = false)
+    @Setter
+    private Boolean freedNightmare;
+
     @PrePersist
     protected void onCreate() {
         // 모든 Boolean 필드는 Builder에서 설정된 값을 유지 (null일 때만 false로 설정)
@@ -60,6 +64,7 @@ public class CharactersClearStateEntity {
         nabel = defaultIfNull(nabel);
         inae = defaultIfNull(inae);
         diregie = defaultIfNull(diregie);
+        freedNightmare = defaultIfNull(freedNightmare);
         updateAt = LocalDateTime.now();
     }
 
@@ -80,13 +85,14 @@ public class CharactersClearStateEntity {
 
     /** 타임라인 분석 결과로 갱신. 기존 true면 유지 (한번 클리어되면 유지) */
     public void updateClearState(boolean nabel, boolean inae, boolean diregie, boolean venusGoddessOfBeauty,
-                                 boolean goddessOfDeathTemple, boolean azureMain) {
+                                 boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare) {
         this.nabel = keepIfTrue(this.nabel, nabel);
         this.inae = keepIfTrue(this.inae, inae);
         this.diregie = keepIfTrue(this.diregie, diregie);
         this.venusGoddessOfBeauty = keepIfTrue(this.venusGoddessOfBeauty, venusGoddessOfBeauty);
         this.goddessOfDeathTemple = keepIfTrue(this.goddessOfDeathTemple, goddessOfDeathTemple);
         this.azureMain = keepIfTrue(this.azureMain, azureMain);
+        this.freedNightmare = keepIfTrue(this.freedNightmare, freedNightmare);
     }
 
     private static boolean keepIfTrue(Boolean existing, boolean fromInfo) {
@@ -101,6 +107,7 @@ public class CharactersClearStateEntity {
             case "nabel" -> { return this.nabel; }
             case "inae" -> { return this.inae; }
             case "diregie" -> { return this.diregie; }
+            case "freed_nightmare" -> { return this.freedNightmare; }
             case null, default -> { return false; }
         }
     }

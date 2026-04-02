@@ -72,7 +72,8 @@ public class CharacterServiceImpl implements CharacterService {
     // 던전 이름 -> clearState 필드명 매핑 (확장 가능)
     private static final Map<String, String> DUNGEON_NAME_TO_FIELD = Map.of(
             "침묵의 성소", "goddessOfDeathTemple",
-            "애쥬어 메인", "azureMain"
+            "애쥬어 메인", "azureMain",
+            "해방된 흉몽", "freedNightmare"
     );
 
     private final ObjectMapper objectMapper;
@@ -156,7 +157,7 @@ public class CharacterServiceImpl implements CharacterService {
 
     private static final Set<String> CLEAR_STATE_CONTENTS = Set.of(
             "azure_main", "goddess_of_death_temple", "venus_goddess_of_beauty",
-            "nabel", "inae", "diregie"
+            "nabel", "inae", "diregie", "freed_nightmare"
     );
 
     @Override
@@ -203,6 +204,7 @@ public class CharacterServiceImpl implements CharacterService {
             case "nabel" -> clearState.setNabel(true);
             case "inae" -> clearState.setInae(true);
             case "diregie" -> clearState.setDiregie(true);
+            case "freed_nightmare" -> clearState.setFreedNightmare(true);
             default -> throw new CustomException(ErrorCode.CLEAR_STATE_CONTENT_INVALID);
         }
         charactersClearStateRepository.save(clearState);
@@ -297,6 +299,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .venusGoddessOfBeauty(clearStateInfo.isVenusGoddessOfBeauty())
                 .goddessOfDeathTemple(clearStateInfo.isGoddessOfDeathTemple())
                 .azureMain(clearStateInfo.isAzureMain())
+                .freedNightmare(clearStateInfo.isFreedNightmare())
                 .build();
         charactersClearStateRepository.save(clearState);
 
@@ -338,7 +341,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isDiregie(),
                 clearStateInfo.isVenusGoddessOfBeauty(),
                 clearStateInfo.isGoddessOfDeathTemple(),
-                clearStateInfo.isAzureMain()
+                clearStateInfo.isAzureMain(),
+                clearStateInfo.isFreedNightmare()
         );
         
         charactersClearStateRepository.save(clearState);
@@ -396,7 +400,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isDiregie(),
                 clearStateInfo.isVenusGoddessOfBeauty(),
                 clearStateInfo.isGoddessOfDeathTemple(),
-                clearStateInfo.isAzureMain()
+                clearStateInfo.isAzureMain(),
+                clearStateInfo.isFreedNightmare()
         );
 
         charactersClearStateRepository.save(clearState);
@@ -539,7 +544,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateMap.getOrDefault("diregie", false),
                 clearStateMap.getOrDefault("venusGoddessOfBeauty", false),
                 clearStateMap.getOrDefault("goddessOfDeathTemple", false),
-                clearStateMap.getOrDefault("azureMain", false)
+                clearStateMap.getOrDefault("azureMain", false),
+                clearStateMap.getOrDefault("freedNightmare", false)
         );
     }
 
@@ -550,15 +556,17 @@ public class CharacterServiceImpl implements CharacterService {
         private final boolean venusGoddessOfBeauty;
         private final boolean goddessOfDeathTemple;
         private final boolean azureMain;
+        private final boolean freedNightmare;
 
         public ClearStateInfo(boolean nabel, boolean inae, boolean diregie, boolean venusGoddessOfBeauty,
-                            boolean goddessOfDeathTemple, boolean azureMain) {
+                            boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare) {
             this.nabel = nabel;
             this.inae = inae;
             this.diregie = diregie;
             this.venusGoddessOfBeauty = venusGoddessOfBeauty;
             this.goddessOfDeathTemple = goddessOfDeathTemple;
             this.azureMain = azureMain;
+            this.freedNightmare = freedNightmare;
         }
 
         public boolean isNabel() {
@@ -583,6 +591,10 @@ public class CharacterServiceImpl implements CharacterService {
 
         public boolean isAzureMain() {
             return azureMain;
+        }
+
+        public boolean isFreedNightmare() {
+            return freedNightmare;
         }
     }
 }
