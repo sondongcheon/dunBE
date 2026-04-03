@@ -533,8 +533,8 @@ public class CharacterServiceImpl implements CharacterService {
                 }
                 yield null;
             }
-            case 513 -> {
-                // 던전 카드 보상 관련 코드
+            case 513, 557 -> {
+                // 던전 카드 보상 관련 코드 557은 서약
                 Object dungeonNameObj = data.get(DATA_KEY_DUNGEON_NAME);
                 if (dungeonNameObj != null) {
                     String dungeonName = dungeonNameObj.toString().trim();
