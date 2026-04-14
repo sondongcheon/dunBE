@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y --no-install-recommends nodejs \
-    && npx -y playwright@1.42.0 install --with-deps chromium \
+    && npx -y playwright@1.42.0 install chromium \
     && rm -rf /var/lib/apt/lists/*
 
 # JAR 파일을 컨테이너로 복사
