@@ -14,6 +14,7 @@ public interface CharactersRepository extends JpaRepository<CharactersEntity, Lo
     Optional<CharactersEntity> findByCharactersId(String charactersId);
     List<CharactersEntity> findByAdventureId(Long adventureId);
     boolean existsByIdAndAdventure_Id(Long id, Long adventureId);
+    Optional<CharactersEntity> findByServerAndCharactersName(String server, String charactersName);
 
     @Query("SELECT c FROM CharactersEntity c LEFT JOIN FETCH c.clearState WHERE c.id = :id")
     Optional<CharactersEntity> findByIdWithClearState(@Param("id") Long id);

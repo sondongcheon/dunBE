@@ -22,7 +22,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
 
     private static final Map<String, Integer> CONTENT_MIN_FAME = Map.of(
             "azure_main", 44928,
-            "goddess_of_death_temple", 48987,
+            "goddess_of_death_temple", 55949,
             "venus_goddess_of_beauty", 41927,
             "nabel", 47683,
             "inae", 72687,
