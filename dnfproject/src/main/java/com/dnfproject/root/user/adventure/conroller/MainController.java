@@ -10,6 +10,8 @@ import com.dnfproject.root.user.adventure.db.dto.req.LoginReq;
 import com.dnfproject.root.user.adventure.db.dto.req.UpdatePasswordReq;
 import com.dnfproject.root.user.adventure.db.dto.res.LoginRes;
 import com.dnfproject.root.user.adventure.db.dto.res.LoginResBody;
+import com.dnfproject.root.user.adventure.db.dto.res.MemoUpdateRes;
+import com.dnfproject.root.user.adventure.service.InfoService;
 import com.dnfproject.root.user.adventure.service.LoginService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import java.util.Map;
 public class MainController {
 
     private final LoginService loginService;
+    private final InfoService infoService;
     private final JwtUtil jwtUtil;
 
     @PostMapping("/join")
@@ -51,6 +54,12 @@ public class MainController {
         }
         LoginRes response = loginService.reissue(refreshToken);
         return buildResponseWithTokenCookies(response);
+    }
+
+    @GetMapping("/memoUpdate")
+    public ResponseEntity<MemoUpdateRes> memoUpdate(@RequestParam("adventureName") String adventureName) {
+        MemoUpdateRes response = infoService.memoUpdate(adventureName);
+        return ResponseEntity.ok(response);
     }
 
     /** 테스트용: 모험단 비밀번호 수정 */

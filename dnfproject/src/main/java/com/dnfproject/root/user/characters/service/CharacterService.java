@@ -4,6 +4,7 @@ import com.dnfproject.root.user.characters.db.dto.req.AddCharactersReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateCharacterMemoReq;
 import com.dnfproject.root.user.characters.db.dto.req.UpdateClearStateReq;
 import com.dnfproject.root.user.characters.db.dto.res.CharacterAddRes;
+import com.dnfproject.root.user.characters.db.entity.CharactersEntity;
 
 public interface CharacterService {
     CharacterAddRes addCharacters(AddCharactersReq request);
@@ -11,4 +12,6 @@ public interface CharacterService {
     void updateMemo(UpdateCharacterMemoReq request, Long adventureId);
 
     void updateClearStateByContent(UpdateClearStateReq request, Long adventureId);
+
+    CharactersEntity addCharacterInternal(String server, String characterName);
 }

@@ -7,6 +7,19 @@ ARG JAR_FILE=build/libs/dnfproject-1.0-SNAPSHOT.jar
 ARG JASYPT_KEY
 ENV JASYPT_KEY=${JASYPT_KEY}
 
+# Playwright 브라우저 설치 경로 고정
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+# Node/npm 설치 후 Playwright Chromium과 의존 패키지 선설치
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    gnupg \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && npx -y playwright@1.42.0 install --with-deps chromium \
+    && rm -rf /var/lib/apt/lists/*
+
 # JAR 파일을 컨테이너로 복사
 COPY ${JAR_FILE} app.jar
 

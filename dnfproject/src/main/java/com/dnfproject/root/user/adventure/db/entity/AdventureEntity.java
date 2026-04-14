@@ -33,6 +33,13 @@ public class AdventureEntity {
     @Column(name = "role", length = 45)
     private String role;
 
+    @Column(name = "last_memo_update_at", nullable = false)
+    private LocalDateTime lastMemoUpdateAt;
+
+    public void updateLastMemoUpdateAt(LocalDateTime lastMemoUpdateAt) {
+        this.lastMemoUpdateAt = lastMemoUpdateAt;
+    }
+
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
 
@@ -43,6 +50,9 @@ public class AdventureEntity {
     protected void onCreate() {
         if (role == null || role.isBlank()) {
             role = "USER";
+        }
+        if (lastMemoUpdateAt == null) {
+            lastMemoUpdateAt = LocalDateTime.of(1970, 1, 1, 0, 0, 0);
         }
         createAt = LocalDateTime.now();
         updateAt = LocalDateTime.now();

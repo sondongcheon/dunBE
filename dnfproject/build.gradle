@@ -37,6 +37,12 @@ dependencies {
 
     //JASYPT
     implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+    //Playwright html 요청
+    implementation 'com.microsoft.playwright:playwright:1.42.0'
+
+    //Jsoup DOM 커스텀
+    implementation 'org.jsoup:jsoup:1.17.2'
 }
 
 test {

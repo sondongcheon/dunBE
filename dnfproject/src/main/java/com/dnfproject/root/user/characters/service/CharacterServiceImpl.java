@@ -113,13 +113,14 @@ public class CharacterServiceImpl implements CharacterService {
         return CharacterAddRes.builder().failed(failed).build();
     }
 
-    private void addCharacterInternal(String server, String characterName) {
+    @Transactional
+    public CharactersEntity addCharacterInternal(String server, String characterName) {
         CharacterSearchRes characterSearchRes = searchCharacter(server, characterName);
         CharacterSearchRes.CharacterRow searchRow = characterSearchRes.getRows().getFirst();
 
         // 기존 캐릭터 체크 및 업데이트 처리
         if (handleExistingCharacter(searchRow)) {
-            return;
+            return null;
         }
 
         // 타임라인 조회
@@ -132,7 +133,7 @@ public class CharacterServiceImpl implements CharacterService {
         AdventureEntity adventure = findOrCreateAdventure(basicInfo.getAdventureName());
 
         // 캐릭터 엔티티 생성 및 저장
-        createAndSaveCharacter(adventure, basicInfo, searchRow, timelineRes);
+        return createAndSaveCharacter(adventure, basicInfo, searchRow, timelineRes);
     }
 
     @Override

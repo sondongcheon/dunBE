@@ -45,17 +45,15 @@ public class ApiRequest {
             return responseEntity.getBody();
 
         } catch (RestClientResponseException exception) {
-            throw apiErrorHandle(exception);
+            throw apiErrorHandle(exception, url);
         }
     }
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    private static CustomException apiErrorHandle(RestClientResponseException exception) {
+    private static CustomException apiErrorHandle(RestClientResponseException exception, String url) {
         int statusCode = exception.getStatusCode().value();
         String responseBody = exception.getResponseBodyAsString();
-        log.error("External API error: {} - statusCode: {}, responseBody: {}", exception.getMessage(), statusCode, responseBody);
-
         String dnfCode = parseDnfCodeFromResponse(responseBody);
         ErrorCode errorCode = dnfCode != null ? ErrorCode.fromDnfApiCode(dnfCode) : null;
 
