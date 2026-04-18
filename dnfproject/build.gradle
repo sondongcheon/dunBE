@@ -43,6 +43,9 @@ dependencies {
 
     //Jsoup DOM 커스텀
     implementation 'org.jsoup:jsoup:1.17.2'
+
+    //Json 커스텀
+    implementation 'org.json:json:20240303'
 }
 
 test {

@@ -39,10 +39,16 @@ public class CharactersEntity {
     private String jobGrowName;
 
     @Column(name = "fame")
-    private Integer fame;
+    private int fame;
 
     @Column(name = "memo", length = 256)
     private String memo;
+
+    @Column(name = "set_equip", length = 45)
+    private String setEquip;
+
+    @Column(name = "set_oath", length = 45)
+    private String setOath;
 
     @Column(name = "create_at", nullable = false, updatable = false)
     private LocalDateTime createAt;
@@ -68,8 +74,13 @@ public class CharactersEntity {
         this.memo = memo;
     }
 
-    public void updateFame(Integer fame) {
+    public void updateFame(int fame) {
         this.fame = fame;
+    }
+
+    public void updateEquipOath(String equip, String oath) {
+        this.setEquip = equip;
+        this.setOath = oath;
     }
 
     public static CharactersEntity from(AdventureEntity adventure, String charactersId, String server, String charactersName, String jobGrowName, Integer fame) {

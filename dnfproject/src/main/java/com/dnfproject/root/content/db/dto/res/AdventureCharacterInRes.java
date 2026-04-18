@@ -18,5 +18,7 @@ public class AdventureCharacterInRes {
     private String job;
     private Integer fame;
     private String memo;
+    private String setEquip;
+    private String setOath;
     private String img;
 }

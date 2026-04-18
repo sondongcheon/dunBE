@@ -52,6 +52,7 @@ public class ApiRequest {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static CustomException apiErrorHandle(RestClientResponseException exception, String url) {
+        log.error("ERROR URL : https://api.neople.co.kr/df{}", url);
         int statusCode = exception.getStatusCode().value();
         String responseBody = exception.getResponseBodyAsString();
         String dnfCode = parseDnfCodeFromResponse(responseBody);

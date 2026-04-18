@@ -27,8 +27,8 @@ public class AdventureInPartyRes {
         this.characters = new ArrayList<>();
     }
 
-    public void addCharacter(Long id, String characterId, String name, String server, String job, Integer fame, String memo) {
+    public void addCharacter(Long id, String characterId, String name, String server, String job, Integer fame, String memo, String setEquip, String setOath) {
         String serverEnglish = Servers.getByName(server != null ? server : "").getEnglishName();
-        this.characters.add( new AdventureCharacterInRes(id, characterId, name, server, job, fame, memo, String.format(IMG_URL_FORMAT, serverEnglish, characterId)) );
+        this.characters.add( new AdventureCharacterInRes(id, characterId, name, server, job, fame, memo, setEquip, setOath, String.format(IMG_URL_FORMAT, serverEnglish, characterId)) );
     }
 }

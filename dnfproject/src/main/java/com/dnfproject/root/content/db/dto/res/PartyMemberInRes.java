@@ -22,6 +22,8 @@ public class PartyMemberInRes {
     private String job;
     private Integer fame;  // 명성
     private String memo;
+    private String setEquip;
+    private String setOath;
     private String img;
     @Setter
     private boolean clearState;

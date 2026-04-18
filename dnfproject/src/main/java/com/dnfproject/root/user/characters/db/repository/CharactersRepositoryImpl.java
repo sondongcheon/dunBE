@@ -46,6 +46,8 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 "c.job_grow_name AS job, " +
                 "c.fame, " +
                 "c.memo, " +
+                "c.set_equip AS setEquip, " +
+                "c.set_oath AS setOath, " +
                 "m.id AS groupId, " +
                 "m.group_id AS groupNum, " +
                 "state." + content + " AS clearState " +
@@ -77,6 +79,8 @@ public class CharactersRepositoryImpl implements CharactersRepositoryCustom {
                 .job(rs.getString("job"))
                 .fame(getIntegerOrNull(rs, "fame"))
                 .memo(rs.getString("memo"))
+                .setEquip(rs.getString("setEquip"))
+                .setOath(rs.getString("setOath"))
                 .groupId(getLongOrNull(rs, "groupId"))
                 .groupNum(getLongOrNull(rs, "groupNum"))
                 .clearState(toBoolean(rs.getObject("clearState")))

@@ -78,7 +78,7 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
         Integer needFame = CONTENT_MIN_FAME.get(content);
 
         //String partyAdventureSql = "SELECT party_id, leader FROM " + partyAdventureTable + " WHERE adventure_id = ? ORDER BY party_id";
-        String sql = "SELECT padv.id, padv.party_id, p.name, padv.adventure_id, cha.id as chaid, cha.characters_name, cha.server, cha.characters_id, cha.job_grow_name, cha.fame, cha.memo, padv.leader, adv.adventure_name, g.id as group_id, g.name AS group_name, sta." + content + " as state "
+        String sql = "SELECT padv.id, padv.party_id, p.name, padv.adventure_id, cha.id as chaid, cha.characters_name, cha.server, cha.characters_id, cha.job_grow_name, cha.fame, cha.memo, cha.set_equip, cha.set_oath, padv.leader, adv.adventure_name, g.id as group_id, g.name AS group_name, sta." + content + " as state "
                 + " FROM ( SELECT DISTINCT party_id FROM " + partyAdventureTable + " WHERE adventure_id = ? ) myp "
                 + " JOIN " + partyAdventureTable + " padv ON padv.party_id = myp.party_id "
                 + " JOIN adventure adv ON adv.id = padv.adventure_id "
@@ -115,7 +115,9 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                     (String) row.get("server"),
                     (String) row.get("job_grow_name"),
                     toInteger(row.get("fame")),
-                    (String) row.get("memo")
+                    (String) row.get("memo"),
+                    (String) row.get("set_equip"),
+                    (String) row.get("set_oath")
             );
 
             if( row.get("group_id") != null ) {
@@ -135,6 +137,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                         (String) row.get("job_grow_name"),
                         toInteger(row.get("fame")),
                         (String) row.get("memo"),
+                        (String) row.get("set_equip"),
+                        (String) row.get("set_oath"),
                         toBoolean(row.get("state"))
                 );
             }
@@ -204,7 +208,9 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                     (String) row.get("server"),
                     (String) row.get("job_grow_name"),
                     toInteger(row.get("fame")),
-                    (String) row.get("memo")
+                    (String) row.get("memo"),
+                    (String) row.get("set_equip"),
+                    (String) row.get("set_oath")
             );
 
             if (row.get("group_id") != null) {
@@ -224,6 +230,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
                         (String) row.get("job_grow_name"),
                         toInteger(row.get("fame")),
                         (String) row.get("memo"),
+                        (String) row.get("set_equip"),
+                        (String) row.get("set_oath"),
                         toBoolean(row.get("state"))
                 );
             }
