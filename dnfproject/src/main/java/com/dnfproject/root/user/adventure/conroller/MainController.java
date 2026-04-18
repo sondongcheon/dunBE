@@ -7,10 +7,12 @@ import com.dnfproject.root.common.exception.CustomException;
 import com.dnfproject.root.common.exception.ErrorCode;
 import com.dnfproject.root.user.adventure.db.dto.req.JoinReq;
 import com.dnfproject.root.user.adventure.db.dto.req.LoginReq;
+import com.dnfproject.root.user.adventure.db.dto.req.MemoUpdateFromHtmlReq;
 import com.dnfproject.root.user.adventure.db.dto.req.UpdatePasswordReq;
 import com.dnfproject.root.user.adventure.db.dto.res.LoginRes;
 import com.dnfproject.root.user.adventure.db.dto.res.LoginResBody;
 import com.dnfproject.root.user.adventure.db.dto.res.MemoUpdateRes;
+import com.dnfproject.root.user.adventure.db.dto.res.MyInfoRes;
 import com.dnfproject.root.user.adventure.service.InfoService;
 import com.dnfproject.root.user.adventure.service.LoginService;
 import jakarta.servlet.http.Cookie;
@@ -57,9 +59,38 @@ public class MainController {
     }
 
     @GetMapping("/memoUpdate")
-    public ResponseEntity<MemoUpdateRes> memoUpdate(@RequestParam("adventureName") String adventureName) {
-        MemoUpdateRes response = infoService.memoUpdate(adventureName);
+    public ResponseEntity<MemoUpdateRes> memoUpdate(@RequestParam("adventureName") String adventureName, @RequestParam("check") boolean check) {
+        MemoUpdateRes response = infoService.memoUpdate(adventureName, check);
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 수동으로 붙여넣은 던담 HTML로 메모 갱신. 본문에서 모험단명을 추출해 등록된 모험단과 일치할 때만 처리.
+     */
+    @PostMapping("/memoUpdate/html")
+    public ResponseEntity<MemoUpdateRes> memoUpdateFromHtml(@RequestBody MemoUpdateFromHtmlReq request) {
+        if (request == null || request.getHtml() == null || request.getHtml().isBlank()) {
+            throw new CustomException(ErrorCode.HTML_BODY_REQUIRED);
+        }
+        return ResponseEntity.ok(infoService.memoUpdateFromHtml(request.getHtml()));
+    }
+
+    /**
+     * 모험단 소속 캐릭터 + 클리어 상태. {@code adventureId} 또는 {@code adventureName} 중 하나만 전달.
+     */
+    @GetMapping("/my-info")
+    public ResponseEntity<MyInfoRes> myInfo(
+            @RequestParam(value = "adventureId", required = false) Long adventureId,
+            @RequestParam(value = "adventureName", required = false) String adventureName) {
+        boolean hasId = adventureId != null;
+        boolean hasName = adventureName != null && !adventureName.isBlank();
+        if (hasId == hasName) {
+            throw new CustomException(ErrorCode.MY_INFO_LOOKUP_PARAM);
+        }
+        if (hasId) {
+            return ResponseEntity.ok(infoService.getMyInfo(adventureId));
+        }
+        return ResponseEntity.ok(infoService.getMyInfoByAdventureName(adventureName.trim()));
     }
 
     /** 테스트용: 모험단 비밀번호 수정 */
@@ -67,6 +98,11 @@ public class MainController {
     public ResponseEntity<Void> updatePassword(@RequestBody UpdatePasswordReq request) {
         loginService.updatePassword(request.getAdventureName(), request.getNewPassword());
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/test/pass")
+    public boolean testPass(@RequestParam(value = "password") String password) {
+        return password.equals("3754");
     }
 
     private ResponseEntity<LoginResBody> buildResponseWithTokenCookies(LoginRes response) {

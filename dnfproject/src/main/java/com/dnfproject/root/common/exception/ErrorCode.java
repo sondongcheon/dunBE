@@ -15,6 +15,8 @@ public enum ErrorCode {
     REFRESH_TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "AUTH-003", "리프레시 토큰이 유효하지 않거나 만료되었습니다."),
     ADVENTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "AUTH-004", "모험단을 찾을 수 없습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-005", "로그인이 필요합니다."),
+    MY_INFO_LOOKUP_PARAM(HttpStatus.BAD_REQUEST, "AUTH-007", "adventureId 또는 adventureName 중 정확히 하나를 입력해주세요."),
+    HTML_BODY_REQUIRED(HttpStatus.BAD_REQUEST, "MEMO-001", "HTML 본문이 비어 있습니다."),
     PARTY_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "PARTY-001", "파티 이름을 입력해주세요."),
     CONTENT_REQUIRED(HttpStatus.BAD_REQUEST, "PARTY-002", "content를 입력해주세요."),
     CONTENT_INVALID(HttpStatus.BAD_REQUEST, "PARTY-003", "content는 영문, 숫자, 밑줄만 허용됩니다."),

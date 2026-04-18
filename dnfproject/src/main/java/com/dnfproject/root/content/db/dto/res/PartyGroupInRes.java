@@ -27,7 +27,7 @@ public class PartyGroupInRes {
         this.members = new ArrayList<>();
     }
 
-    public void addMember(Long id, Long adventureId, String characterId, String name, String adventureName, String server, String job, Integer fame, String memo, Boolean state) {
+    public void addMember(Long id, Long adventureId, String characterId, String name, String adventureName, String server, String job, Integer fame, String memo, String setEquip, String setOath, Boolean state) {
         String serverEnglish = Servers.getByName(server != null ? server : "").getEnglishName();
         this.members.add(
                 new PartyMemberInRes(id,
@@ -40,6 +40,8 @@ public class PartyGroupInRes {
                         job,
                         fame,
                         memo,
+                        setEquip,
+                        setOath,
                         String.format(IMG_URL_FORMAT, serverEnglish, characterId),
                         state)
         );

@@ -17,6 +17,8 @@ public class CharacterListDTO {
     private String job;
     private Integer fame;
     private String memo;
+    private String setEquip;
+    private String setOath;
     private Long groupId;
     private Long groupNum;
     private Boolean clearState;

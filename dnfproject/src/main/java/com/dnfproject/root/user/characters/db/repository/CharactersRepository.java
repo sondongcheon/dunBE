@@ -18,4 +18,13 @@ public interface CharactersRepository extends JpaRepository<CharactersEntity, Lo
 
     @Query("SELECT c FROM CharactersEntity c LEFT JOIN FETCH c.clearState WHERE c.id = :id")
     Optional<CharactersEntity> findByIdWithClearState(@Param("id") Long id);
+
+    /** characters ⋈ characters_clear_state (clear_state 없는 캐릭터는 제외) */
+    @Query("SELECT c FROM CharactersEntity c JOIN FETCH c.clearState JOIN FETCH c.adventure "
+            + "WHERE c.adventure.id = :adventureId ORDER BY c.fame DESC")
+    List<CharactersEntity> findByAdventureIdWithClearStateFetched(@Param("adventureId") Long adventureId);
+
+    @Query("SELECT c FROM CharactersEntity c JOIN FETCH c.clearState JOIN FETCH c.adventure a "
+            + "WHERE a.adventureName = :adventureName ORDER BY c.fame DESC")
+    List<CharactersEntity> findByAdventureNameWithClearStateFetched(@Param("adventureName") String adventureName);
 }

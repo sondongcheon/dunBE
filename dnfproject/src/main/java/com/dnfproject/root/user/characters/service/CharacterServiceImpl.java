@@ -17,6 +17,7 @@ import com.dnfproject.root.user.characters.db.entity.CharactersEntity;
 import com.dnfproject.root.user.characters.db.entity.CharactersClearStateEntity;
 import com.dnfproject.root.user.characters.db.repository.CharactersRepository;
 import com.dnfproject.root.user.characters.db.repository.CharactersClearStateRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -325,9 +328,10 @@ public class CharacterServiceImpl implements CharacterService {
         // 타임라인 조회
         TimelineRes timelineRes = getCharacterTimeline(serverEnglish, characterId);
 
-        // Fame 최신화
-        if (timelineRes != null && timelineRes.getFame() != null) {
+        // Fame 최신화 && (character.getFame() != timelineRes.getFame() || character.getSetEquip() == null)
+        if (timelineRes != null && timelineRes.getFame() != null  ) {
             character.updateFame(timelineRes.getFame());
+            getSetEquipOath(serverEnglish, characterId, character);
             charactersRepository.save(character);
         }
         
@@ -371,6 +375,40 @@ public class CharacterServiceImpl implements CharacterService {
         return timelineRes;
     }
 
+    private void getSetEquipOath(String server, String characterId, CharactersEntity characters) {
+        String equipUrl = String.format("/servers/%s/characters/%s/equip/equipment",
+                server, characterId);
+        String oathUrl = String.format("/servers/%s/characters/%s/equip/oath",
+                server, characterId);
+        Map<String, Object> equip = (Map<String, Object>) ApiRequest.requestGetAPI(equipUrl);
+        Map<String, Object> oath = (Map<String, Object>) ApiRequest.requestGetAPI(oathUrl);
+
+        // Object → String 변환 후 JSON 파싱
+        JSONObject equipJson = new JSONObject(equip);
+        JSONObject oathJson = new JSONObject(oath);
+
+        String equipSetItemName = null;
+
+        JSONArray setItemInfo = equipJson.optJSONArray("setItemInfo");
+        if (setItemInfo != null && setItemInfo.length() > 0) {
+            JSONObject firstItem = setItemInfo.getJSONObject(0);
+            equipSetItemName = firstItem.optString("setItemName", "") + " " + firstItem.optString("setItemRarityName", "");
+        }
+
+        String oathSetName = null;
+
+        JSONObject oathObj = oathJson.optJSONObject("oath");
+
+        if (oathObj != null) {
+            JSONObject setInfo = oathObj.optJSONObject("setInfo");
+            if (setInfo != null) {
+                oathSetName = setInfo.optString("setName", "") + " " + setInfo.optString("setRarityName", "");
+            }
+        }
+        characters.updateEquipOath(equipSetItemName, oathSetName);
+
+    }
+
     /**
      * 이미 조회된 clearState가 있으면 재활용(findById 생략). null이면 내부에서 조회 후 갱신.
      */
@@ -385,8 +423,9 @@ public class CharacterServiceImpl implements CharacterService {
         // 타임라인 조회
         TimelineRes timelineRes = getCharacterTimeline(serverEnglish, characterId);
         // Fame 최신화
-        if (timelineRes != null && timelineRes.getFame() != null) {
+        if (timelineRes != null && timelineRes.getFame() != null  && (character.getFame() != timelineRes.getFame() || character.getSetEquip() == null) ) {
             character.updateFame(timelineRes.getFame());
+            getSetEquipOath(serverEnglish, characterId, character);
             charactersRepository.save(character);
         }
 
