@@ -67,9 +67,10 @@ public class CharacterServiceImpl implements CharacterService {
             "디레지에 레이드", "diregie"
     );
     
-    // 레기온 이름 -> clearState 필드명 매핑 (확장 가능)
-    private static final Map<String, String> REGION_NAME_TO_FIELD = Map.of(
-            "베누스", "venusGoddessOfBeauty"
+    // 레기온 이름 -> clearState 필드명 매핑 (확장 가능). 타임라인 regionName 문자열 기준.
+    private static final Map<String, String> REGION_NAME_TO_FIELD = Map.ofEntries(
+            Map.entry("베누스", "venusGoddessOfBeauty"),
+            Map.entry("아포칼립스", "apocalypse")
     );
     
     // 던전 이름 -> clearState 필드명 매핑 (확장 가능)
@@ -164,7 +165,7 @@ public class CharacterServiceImpl implements CharacterService {
     private static final Set<String> CLEAR_STATE_CONTENTS = Set.of(
             "azure_main", "goddess_of_death_temple", "venus_goddess_of_beauty",
             "nabel", "inae", "diregie", "freed_nightmare",
-            "star_turtle_grand_library", "heretics_castle"
+            "star_turtle_grand_library", "heretics_castle", "apocalypse"
     );
 
     @Override
@@ -214,6 +215,7 @@ public class CharacterServiceImpl implements CharacterService {
             case "freed_nightmare" -> clearState.setFreedNightmare(true);
             case "star_turtle_grand_library" -> clearState.setStarTurtleGrandLibrary(true);
             case "heretics_castle" -> clearState.setHereticsCastle(true);
+            case "apocalypse" -> clearState.setApocalypse(true);
             default -> throw new CustomException(ErrorCode.CLEAR_STATE_CONTENT_INVALID);
         }
         charactersClearStateRepository.save(clearState);
@@ -311,6 +313,7 @@ public class CharacterServiceImpl implements CharacterService {
                 .freedNightmare(clearStateInfo.isFreedNightmare())
                 .starTurtleGrandLibrary(clearStateInfo.isStarTurtleGrandLibrary())
                 .hereticsCastle(clearStateInfo.isHereticsCastle())
+                .apocalypse(clearStateInfo.isApocalypse())
                 .build();
         charactersClearStateRepository.save(clearState);
 
@@ -356,7 +359,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isAzureMain(),
                 clearStateInfo.isFreedNightmare(),
                 clearStateInfo.isStarTurtleGrandLibrary(),
-                clearStateInfo.isHereticsCastle()
+                clearStateInfo.isHereticsCastle(),
+                clearStateInfo.isApocalypse()
         );
         
         charactersClearStateRepository.save(clearState);
@@ -452,7 +456,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateInfo.isAzureMain(),
                 clearStateInfo.isFreedNightmare(),
                 clearStateInfo.isStarTurtleGrandLibrary(),
-                clearStateInfo.isHereticsCastle()
+                clearStateInfo.isHereticsCastle(),
+                clearStateInfo.isApocalypse()
         );
 
         charactersClearStateRepository.save(clearState);
@@ -570,8 +575,11 @@ public class CharacterServiceImpl implements CharacterService {
                 if (regionNameObj != null) {
                     String regionName = regionNameObj.toString().trim();
                     yield REGION_NAME_TO_FIELD.get(regionName);
+                } else {
+                    // API 받아오는곳에 레기온 이름을 안넣어놓은 네오플 찐빠
+                    yield "apocalypse";
                 }
-                yield null;
+                //yield null;
             }
             case 513, 557 -> {
                 // 던전 카드 보상 관련 코드 557은 서약
@@ -598,7 +606,8 @@ public class CharacterServiceImpl implements CharacterService {
                 clearStateMap.getOrDefault("azureMain", false),
                 clearStateMap.getOrDefault("freedNightmare", false),
                 clearStateMap.getOrDefault("starTurtleGrandLibrary", false),
-                clearStateMap.getOrDefault("hereticsCastle", false)
+                clearStateMap.getOrDefault("hereticsCastle", false),
+                clearStateMap.getOrDefault("apocalypse", false)
         );
     }
 
@@ -612,10 +621,11 @@ public class CharacterServiceImpl implements CharacterService {
         private final boolean freedNightmare;
         private final boolean starTurtleGrandLibrary;
         private final boolean hereticsCastle;
+        private final boolean apocalypse;
 
         public ClearStateInfo(boolean nabel, boolean inae, boolean diregie, boolean venusGoddessOfBeauty,
                             boolean goddessOfDeathTemple, boolean azureMain, boolean freedNightmare,
-                            boolean starTurtleGrandLibrary, boolean hereticsCastle) {
+                            boolean starTurtleGrandLibrary, boolean hereticsCastle, boolean apocalypse) {
             this.nabel = nabel;
             this.inae = inae;
             this.diregie = diregie;
@@ -625,6 +635,7 @@ public class CharacterServiceImpl implements CharacterService {
             this.freedNightmare = freedNightmare;
             this.starTurtleGrandLibrary = starTurtleGrandLibrary;
             this.hereticsCastle = hereticsCastle;
+            this.apocalypse = apocalypse;
         }
 
         public boolean isNabel() {
@@ -661,6 +672,10 @@ public class CharacterServiceImpl implements CharacterService {
 
         public boolean isHereticsCastle() {
             return hereticsCastle;
+        }
+
+        public boolean isApocalypse() {
+            return apocalypse;
         }
     }
 }
