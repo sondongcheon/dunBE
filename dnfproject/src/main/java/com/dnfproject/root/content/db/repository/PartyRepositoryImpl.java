@@ -29,7 +29,8 @@ public class PartyRepositoryImpl implements PartyRepositoryCustom {
             "diregie", 63256,
             "freed_nightmare", 71178,
             "star_turtle_grand_library", 91581,
-            "heretics_castle", 101852
+            "heretics_castle", 101852,
+            "apocalypse", 73992
     );
     private final JdbcTemplate jdbcTemplate;
 

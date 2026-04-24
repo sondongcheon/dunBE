@@ -41,6 +41,7 @@ public class MyInfoCharacterRes {
     private Boolean freedNightmare;
     private Boolean starTurtleGrandLibrary;
     private Boolean hereticsCastle;
+    private Boolean apocalypse;
 
     public static MyInfoCharacterRes from(CharactersEntity c) {
         CharactersClearStateEntity s = c.getClearState();
@@ -70,6 +71,7 @@ public class MyInfoCharacterRes {
                 .freedNightmare(s != null ? s.getFreedNightmare() : null)
                 .starTurtleGrandLibrary(s != null ? s.getStarTurtleGrandLibrary() : null)
                 .hereticsCastle(s != null ? s.getHereticsCastle() : null)
+                .apocalypse(s != null ? s.getApocalypse() : null)
                 .build();
     }
 
